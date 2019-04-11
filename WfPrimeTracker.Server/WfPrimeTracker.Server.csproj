@@ -1,0 +1,75 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <TypeScriptToolsVersion>3.3</TypeScriptToolsVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ClientApp\app\**" />
+    <Compile Remove="ClientApp\common\**" />
+    <Content Remove="ClientApp\app\**" />
+    <Content Remove="ClientApp\common\**" />
+    <EmbeddedResource Remove="ClientApp\app\**" />
+    <EmbeddedResource Remove="ClientApp\common\**" />
+    <None Remove="ClientApp\app\**" />
+    <None Remove="ClientApp\common\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.0" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.7.0" />
+    <PackageReference Include="Microsoft.AspNetCore.All" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
+  </ItemGroup>
+
+  <Target Name="Development" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug'">
+    
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js isnt installed or is not on your path VAR." />
+
+    <Message Condition="!Exists('node_modules')" Text="Installing packages" />
+    <Exec Condition="!Exists('node_modules')" Command="npm install --production false" />
+
+    <Exec Condition="!Exists('wwwroot\dist')" Command="npm run build:dev" />
+  </Target>
+
+  <Target Name="Production" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Release'">
+
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js isnt installed or is not on your path VAR." />
+
+    <Message Condition="!Exists('node_modules')" Text="Installing packages" />
+    <Exec Condition="!Exists('node_modules')" Command="npm install --production false" />
+
+    <Exec Command="npm run build:prod" />
+  </Target>
+
+  <Target Name="CleanWebpack" AfterTargets="Clean">
+    <RemoveDir Directories="wwwroot\dist" />
+  </Target>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WfPrimeTracker.Business\WfPrimeTracker.Business.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Views\IDontLikeTypeScript\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+  </ItemGroup>
+
+</Project>

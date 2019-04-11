@@ -1,0 +1,79 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00 Solution Items", "00 Solution Items", "{BC6FA015-C1A2-46DA-A298-FD446E2CBCB1}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 Domain Layer", "01 Domain Layer", "{EBA20274-920C-41BF-B91C-4D9DE405A8D9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 Infrastructure Layer", "02 Infrastructure Layer", "{A4515462-A786-45F3-A0C7-F9A7B245CF7E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03 Data Layer", "03 Data Layer", "{92CFFDC4-33D3-44B7-8322-324683D2612F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04 Business Layer", "04 Business Layer", "{E5A56678-D18D-422C-9205-0911189F5368}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "05 Application Layer", "05 Application Layer", "{2C70AB2E-8895-4BDA-AC0D-97E9E1EB447F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WfPrimeTracker.Server", "WfPrimeTracker.Server\WfPrimeTracker.Server.csproj", "{CFF4B92C-D5E8-4C15-ACE9-D9D0F142420D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WfPrimeTracker.Business", "WfPrimeTracker.Business\WfPrimeTracker.Business.csproj", "{38B043D1-E71A-4E1C-B0CB-F70A257BBFCC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WfPrimeTracker.Dtos", "WfPrimeTracker.Dtos\WfPrimeTracker.Dtos.csproj", "{F898EBF5-3482-46FB-AF6F-04DE03A41320}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WfPrimeTracker.Data", "WfPrimeTracker.Data\WfPrimeTracker.Data.csproj", "{BE04C943-53F7-449A-8ABC-A72F7E2E66F1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WfPrimeTracker.Infrastructure", "WfPrimeTracker.Infrastructure\WfPrimeTracker.Infrastructure.csproj", "{35E939B8-DB61-4B97-A81E-C8B029BEA5BE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WfPrimeTracker.Domain", "WfPrimeTracker.Domain\WfPrimeTracker.Domain.csproj", "{306FC38F-52EC-47B1-99D5-CDC028143589}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CFF4B92C-D5E8-4C15-ACE9-D9D0F142420D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFF4B92C-D5E8-4C15-ACE9-D9D0F142420D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFF4B92C-D5E8-4C15-ACE9-D9D0F142420D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFF4B92C-D5E8-4C15-ACE9-D9D0F142420D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38B043D1-E71A-4E1C-B0CB-F70A257BBFCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38B043D1-E71A-4E1C-B0CB-F70A257BBFCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38B043D1-E71A-4E1C-B0CB-F70A257BBFCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38B043D1-E71A-4E1C-B0CB-F70A257BBFCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F898EBF5-3482-46FB-AF6F-04DE03A41320}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F898EBF5-3482-46FB-AF6F-04DE03A41320}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F898EBF5-3482-46FB-AF6F-04DE03A41320}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F898EBF5-3482-46FB-AF6F-04DE03A41320}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE04C943-53F7-449A-8ABC-A72F7E2E66F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE04C943-53F7-449A-8ABC-A72F7E2E66F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE04C943-53F7-449A-8ABC-A72F7E2E66F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE04C943-53F7-449A-8ABC-A72F7E2E66F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35E939B8-DB61-4B97-A81E-C8B029BEA5BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35E939B8-DB61-4B97-A81E-C8B029BEA5BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35E939B8-DB61-4B97-A81E-C8B029BEA5BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35E939B8-DB61-4B97-A81E-C8B029BEA5BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{306FC38F-52EC-47B1-99D5-CDC028143589}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{306FC38F-52EC-47B1-99D5-CDC028143589}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{306FC38F-52EC-47B1-99D5-CDC028143589}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{306FC38F-52EC-47B1-99D5-CDC028143589}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CFF4B92C-D5E8-4C15-ACE9-D9D0F142420D} = {2C70AB2E-8895-4BDA-AC0D-97E9E1EB447F}
+		{38B043D1-E71A-4E1C-B0CB-F70A257BBFCC} = {E5A56678-D18D-422C-9205-0911189F5368}
+		{F898EBF5-3482-46FB-AF6F-04DE03A41320} = {E5A56678-D18D-422C-9205-0911189F5368}
+		{BE04C943-53F7-449A-8ABC-A72F7E2E66F1} = {92CFFDC4-33D3-44B7-8322-324683D2612F}
+		{35E939B8-DB61-4B97-A81E-C8B029BEA5BE} = {A4515462-A786-45F3-A0C7-F9A7B245CF7E}
+		{306FC38F-52EC-47B1-99D5-CDC028143589} = {EBA20274-920C-41BF-B91C-4D9DE405A8D9}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6306B7A3-976F-4CDF-A6D4-97953F747B85}
+	EndGlobalSection
+EndGlobal
