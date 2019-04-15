@@ -1,6 +1,6 @@
 <template>
-    <div data-component="test" class="container border">
-        <PrimePartView :primePart="primePart" />
+    <div data-component="test" class="container">
+        <PrimePartContainerView :primeParts="primeParts" class="red-border" />
     </div>
 </template>
 
@@ -14,9 +14,11 @@ import { PrimePart } from '@/models/PrimePart';
 import RelicContainerView from './RelicContainerView.vue';
 import RelicView from './RelicView.vue';
 import PrimePartView from './PrimePartView.vue';
+import PrimePartContainerView from './PrimePartContainerView.vue';
 
 @Component({
     components: {
+        PrimePartContainerView,
         PrimePartView,
         RelicContainerView,
         RelicView,
@@ -102,5 +104,45 @@ export default class Test extends Vue {
         },
         showRelics: false,
     });
+    private primeParts: PrimePart[] = [
+        new PrimePart({
+            id: 2,
+            name: 'Chassis',
+            count: 1,
+            relicDrops: this.relicDrops,
+            isChecked: {
+                0: true,
+            },
+            showRelics: true,
+        }),
+        this.primePart,
+        new PrimePart({
+            id: 3,
+            name: 'Neuroptics',
+            count: 1,
+            relicDrops: this.relicDrops,
+            isChecked: {
+                0: false,
+            },
+            showRelics: false,
+        }),
+        new PrimePart({
+            id: 4,
+            name: 'Systems',
+            count: 2,
+            relicDrops: this.relicDrops,
+            isChecked: {
+                0: false,
+                1: true,
+            },
+            showRelics: true,
+        }),
+    ];
 }
 </script>
+
+<style lang="scss" scoped>
+.red-border {
+    border: 1px solid red;
+}
+</style>

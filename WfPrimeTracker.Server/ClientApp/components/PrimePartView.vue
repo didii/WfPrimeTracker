@@ -6,14 +6,14 @@
                 @click.native="onToggleCollapse"
                 class="col-auto px-2 py-0"
             />
-            <div class="col">
+            <div class="col prime-sub-part-container">
                 <PrimeSubPartView
                     v-for="index in primePart.count"
                     :key="index"
                     :primePart="primePart"
                     :index="index - 1"
                     :isParentChecked="false"
-                    class="w-100 m-0 px-2"
+                    class="prime-sub-part w-100 m-0 px-2"
                 />
             </div>
             <RelicContainerView
@@ -77,3 +77,13 @@ export default class PrimePartView extends Vue {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+.prime-sub-part-container {
+    display: flex;
+    flex-direction: column;
+    .prime-sub-part {
+        flex: 1 0;
+    }
+}
+</style>

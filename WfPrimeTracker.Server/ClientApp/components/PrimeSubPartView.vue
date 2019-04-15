@@ -51,9 +51,7 @@ export default class PrimeSubPartView extends Vue {
         return this.isParentChecked || this.primePart.isChecked[this.index];
     }
     private set isChecked(value: boolean) {
-        console.log('isChecked set to ' + value);
         this.primePart.isChecked[this.index] = value;
-        this.$forceUpdate();
     }
 }
 </script>
