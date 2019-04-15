@@ -1,0 +1,36 @@
+$common-color: #7a5a3b;
+$uncommon-color: #a0a5a6;
+$rare-color: #9b9861;
+
+$lith-img-url: "https://vignette.wikia.nocookie.net/warframe/images/a/ae/VoidProjectionsIronD.png/revision/latest/scale-to-width-down/350?cb=20160709035804";
+$meso-img-url: "https://vignette.wikia.nocookie.net/warframe/images/1/12/VoidProjectionsBronzeD.png/revision/latest/scale-to-width-down/350?cb=20160709035928";
+$neo-img-url: "https://vignette.wikia.nocookie.net/warframe/images/c/c5/VoidProjectionsSilverD.png/revision/latest/scale-to-width-down/350?cb=20160709035717";
+$axi-img-url: "https://vignette.wikia.nocookie.net/warframe/images/0/0e/VoidProjectionsGoldD.png/revision/latest/scale-to-width-down/350?cb=20160709035734";
+
+/* Fade-in animation */
+@keyframes fadeInOpacity {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+%fade-in {
+    opacity: 1;
+	animation-name: fadeInOpacity;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	animation-duration: 150ms;
+}
+
+/* Selected transition */
+%gradient-base {
+    background-size: 200% 100%;
+    background-image: linear-gradient(to right, rgba(0,0,0,0) 50%, #c6de9e 50%);
+    transition: background-position 500ms;
+}
+%gradient-checked {
+    background-position: -100% 0;
+}

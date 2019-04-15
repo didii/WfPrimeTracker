@@ -6,4 +6,9 @@ export class PrimePart {
     public count!: number;
     public relicDrops!: RelicDrop[];
     public isChecked!: { [index: number]: boolean };
+    public showRelics!: boolean;
+
+    public constructor(init?: Partial<PrimePart>) {
+        Object.assign(this, init);
+    }
 }

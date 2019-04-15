@@ -1,1 +1,11 @@
-@import "../node_modules/bootstrap/scss/bootstrap";
+@import '../node_modules/bootstrap/scss/bootstrap';
+
+.row {
+  margin-left: 0;
+  margin-right: 0;
+}
+.row > .col,
+.row > [class*='col-'] {
+  padding-right: 0;
+  padding-left: 0;
+}
