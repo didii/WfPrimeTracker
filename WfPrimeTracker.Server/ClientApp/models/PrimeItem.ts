@@ -1,11 +1,12 @@
 import { PrimePart } from "./PrimePart";
+import { Ingredient } from './Ingredient';
 
 export class PrimeItem {
     public id!: number;
     public name!: string;
     public wikiUrl!: string;
     public primeParts!: PrimePart[];
-    public ingredients!: PrimeItem[];
+    public ingredients!: Ingredient[];
     public credits!: number;
     public isChecked!: boolean;
     public isCollapsed!: boolean;

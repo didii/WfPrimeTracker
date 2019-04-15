@@ -28,7 +28,7 @@ export default class RelicContainerView extends Vue {
 
 @media (min-width: 768px) {
     .relics-container {
-        border-left: 1px solid #dee2e6;
+        border-left: 1px solid $light-border-color;
     }
 }
 .relics-container {

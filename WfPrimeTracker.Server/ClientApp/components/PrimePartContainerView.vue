@@ -27,8 +27,10 @@ export default class PrimePartContainerView extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import "../vars";
+
 .parts-container > * {
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid $light-border-color;
 }
 .parts-container > *:last-child {
     border-bottom: none;

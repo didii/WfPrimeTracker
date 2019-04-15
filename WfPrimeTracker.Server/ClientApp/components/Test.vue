@@ -1,6 +1,7 @@
 <template>
     <div data-component="test" class="container">
-        <ChecklistContainerView :primeItem="primeItem" class="red-border" />
+        <PrimeItemView :primeItem="primeItem" />
+        <!-- <ChecklistContainerView :primeItem="primeItem" class="red-border" /> -->
     </div>
 </template>
 
@@ -12,14 +13,23 @@ import { Relic } from '@/models/Relic';
 import { RelicTier } from '@/models/RelicTier.enum';
 import { PrimePart } from '@/models/PrimePart';
 import { PrimeItem } from '@/models/PrimeItem';
+import { Ingredient } from '@/models/Ingredient';
 import ChecklistContainerView from './ChecklistContainerView.vue';
 import RelicContainerView from './RelicContainerView.vue';
 import RelicView from './RelicView.vue';
 import PrimePartView from './PrimePartView.vue';
 import PrimePartContainerView from './PrimePartContainerView.vue';
+import InfoContainerView from './InfoContainerView.vue';
+import IngredientsContainerView from './IngredientsContainerView.vue';
+import IngredientView from './IngredientView.vue';
+import PrimeItemView from './PrimeItemView.vue';
 
 @Component({
     components: {
+        PrimeItemView,
+        InfoContainerView,
+        IngredientsContainerView,
+        IngredientView,
         ChecklistContainerView,
         PrimePartContainerView,
         PrimePartView,
@@ -141,20 +151,48 @@ export default class Test extends Vue {
             showRelics: true,
         }),
     ];
+    private ingredient: Ingredient = new Ingredient({
+        id: 1,
+        name: 'Credits',
+        quantity: 25000,
+    });
+    private ingredients: Ingredient[] = [
+        this.ingredient,
+        new Ingredient({
+            id: 2,
+            name: 'Neuroptics',
+            quantity: 1
+        }),
+        new Ingredient({
+            id: 3,
+            name: 'Chassis',
+            quantity: 1
+        }),
+        new Ingredient({
+            id: 4,
+            name: 'Systems',
+            quantity: 1
+        }),
+    ];
+
     private primeItem: PrimeItem = new PrimeItem({
         id: 1,
         name: 'Banshee Prime',
         wikiUrl: 'https://warframe.fandom.com/wiki/Banshee/Prime',
         primeParts: this.primeParts,
-        ingredients: [],
+        ingredients: this.ingredients,
         credits: 25000,
         isChecked: false,
         isCollapsed: false,
     });
+
 }
 </script>
 
 <style lang="scss" scoped>
+.container {
+    margin-top: 30px;
+}
 .red-border {
     border: 1px solid red;
 }
