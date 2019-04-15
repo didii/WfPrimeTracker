@@ -1,6 +1,6 @@
 <template>
     <div data-component="test" class="container">
-        <PrimePartContainerView :primeParts="primeParts" class="red-border" />
+        <ChecklistContainerView :primeItem="primeItem" class="red-border" />
     </div>
 </template>
 
@@ -11,6 +11,8 @@ import { DropChance } from '@/models/DropChance.enum';
 import { Relic } from '@/models/Relic';
 import { RelicTier } from '@/models/RelicTier.enum';
 import { PrimePart } from '@/models/PrimePart';
+import { PrimeItem } from '@/models/PrimeItem';
+import ChecklistContainerView from './ChecklistContainerView.vue';
 import RelicContainerView from './RelicContainerView.vue';
 import RelicView from './RelicView.vue';
 import PrimePartView from './PrimePartView.vue';
@@ -18,6 +20,7 @@ import PrimePartContainerView from './PrimePartContainerView.vue';
 
 @Component({
     components: {
+        ChecklistContainerView,
         PrimePartContainerView,
         PrimePartView,
         RelicContainerView,
@@ -138,6 +141,16 @@ export default class Test extends Vue {
             showRelics: true,
         }),
     ];
+    private primeItem: PrimeItem = new PrimeItem({
+        id: 1,
+        name: 'Banshee Prime',
+        wikiUrl: 'https://warframe.fandom.com/wiki/Banshee/Prime',
+        primeParts: this.primeParts,
+        ingredients: [],
+        credits: 25000,
+        isChecked: false,
+        isCollapsed: false,
+    });
 }
 </script>
 

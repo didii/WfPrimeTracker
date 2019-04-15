@@ -4,6 +4,7 @@
             v-for="primePart in primeParts"
             :key="primePart.id"
             :primePart="primePart"
+            :isParentChecked="isParentChecked"
             class="prime-part"
         />
     </div>
@@ -21,6 +22,7 @@ import PrimePartView from './PrimePartView.vue';
 })
 export default class PrimePartContainerView extends Vue {
     @Prop({ required: true }) private primeParts!: PrimePart[];
+    @Prop({ required: true }) public isParentChecked!: boolean;
 }
 </script>
 

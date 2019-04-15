@@ -9,4 +9,8 @@ export class PrimeItem {
     public credits!: number;
     public isChecked!: boolean;
     public isCollapsed!: boolean;
+
+    public constructor(init?: Partial<PrimeItem>) {
+        Object.assign(this, init);
+    }
 }

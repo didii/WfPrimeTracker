@@ -12,7 +12,7 @@
                     :key="index"
                     :primePart="primePart"
                     :index="index - 1"
-                    :isParentChecked="false"
+                    :isParentChecked="isParentChecked"
                     class="prime-sub-part w-100 m-0 px-2"
                 />
             </div>
@@ -42,6 +42,7 @@ import RelicContainerView from './RelicContainerView.vue';
 })
 export default class PrimePartView extends Vue {
     @Prop({ required: true }) public primePart!: PrimePart;
+    @Prop({required: true}) public isParentChecked!: boolean;
 
     private get dropChance(): DropChance {
         return this.primePart.relicDrops[0].dropChance;

@@ -3,7 +3,7 @@
         data-component="primesubpartview"
         :class="`prime-sub-part ${isChecked ? 'checked' : ''}`"
     >
-        <input type="checkbox" v-model="isChecked" />
+        <input type="checkbox" v-model="isChecked" :disabled="isParentChecked" />
         {{ primePart.name }} {{ index > 0 ? index + 1 : "" }}
         <i
             :class="`fas fa-${iconName}`"
