@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using WfPrimeTracker.Domain;
 
 namespace WfPrimeTracker.Data.Repositories {
-    class PrimeItemRepository : Repository<PrimeItem> {
+    class PrimeItemRepository : PersistentRepository<PrimeItem> {
         /// <inheritdoc />
         public PrimeItemRepository(PrimeContext context) : base(context) { }
 
@@ -32,15 +32,19 @@ namespace WfPrimeTracker.Data.Repositories {
                                                      .ToArrayAsync();
 
             foreach (var item in result) {
-                item.PrimeParts = item.PrimeParts.OrderBy(part => part.Name).ToList();
-                foreach (var part in item.PrimeParts) {
-                    part.RelicDrops = part.RelicDrops
-                                          .OrderBy(x => x.DropChance)
-                                          .ThenBy(x => x.Relic.Tier)
-                                          .ThenBy(x => x.Relic.Name)
-                                          .ToList();
+                if (item.PrimePartIngredients == null)
+                    continue;
+                item.PrimePartIngredients =
+                    item.PrimePartIngredients.OrderBy(ingredient => ingredient.PrimePart.Name).ToList();
+                foreach (var ingredient in item.PrimePartIngredients) {
+                    if (ingredient.RelicDrops == null)
+                        continue;
+                    ingredient.RelicDrops = ingredient.RelicDrops
+                                                      .OrderBy(x => x.DropChance)
+                                                      .ThenBy(x => x.Relic.Tier)
+                                                      .ThenBy(x => x.Relic.Name)
+                                                      .ToList();
                 }
-                item.Ingredients = item.Ingredients.OrderBy(i => i.Name).ToList();
             }
 
             return result;

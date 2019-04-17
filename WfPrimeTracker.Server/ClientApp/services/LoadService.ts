@@ -1,5 +1,5 @@
-import { DataService } from "./DataService";
-import { PrimeItem } from "@/models/PrimeItem";
+import { PrimeItemService } from './PrimeItemService';
+import { PrimeItem } from '@/models/PrimeItem';
 
 interface IPartSaveData {
     [partName: string]: number;
@@ -15,11 +15,12 @@ interface ISaveData {
 
 export class LoadService {
     private saveKey: string = 'saveData';
-    public constructor(private dataService: DataService) { }
+    public constructor(private primeItemService: PrimeItemService) { }
 
     public async load(): Promise<PrimeItem[]> {
+        console.log('Start load');
         // Load items from server
-        const items = await this.dataService.getAll();
+        const items = await this.primeItemService.getAll();
 
         // Get saved data from local storage
         const saved = localStorage.getItem(this.saveKey);
@@ -29,14 +30,17 @@ export class LoadService {
             const foundItem = saveData[item.name];
             item.isChecked = this.default(() => foundItem.isChecked, false);
             item.isCollapsed = this.default(() => foundItem.isCollapsed, false);
-            for (const part of item.primeParts) {
+            for (const partIngredient of item.primePartIngredients) {
+                const part = partIngredient.primePart;
                 const countChecked = this.default(() => foundItem.parts[part.name], 0);
-                part.isChecked = {};
-                for (let i = 0; i < part.count; i++) {
-                    part.isChecked[i] = countChecked > i;
+                partIngredient.isChecked = {};
+                for (let i = 0; i < partIngredient.count; i++) {
+                    partIngredient.isChecked[i] = countChecked > i;
                 }
+                partIngredient.isCollapsed = true;
             }
         }
+        console.log('End load');
         return items;
     }
 
@@ -50,8 +54,10 @@ export class LoadService {
                     parts: {}
                 };
             }
-            for (const part of item.primeParts) {
-                if (!part.isChecked || Object.getOwnPropertyNames(part.isChecked).every(x => !part.isChecked[Number(x)])) continue;
+            for (const partIngredient of item.primePartIngredients) {
+                const part = partIngredient.primePart;
+                if (!partIngredient.isChecked || Object.getOwnPropertyNames(partIngredient.isChecked).every(x => !partIngredient.isChecked[Number(x)]))
+                    continue;
                 if (!result[item.name]) {
                     result[item.name] = {
                         isChecked: item.isChecked,
@@ -60,8 +66,8 @@ export class LoadService {
                     };
                 }
                 let count = 0;
-                for (const propName of Object.getOwnPropertyNames(part.isChecked)) {
-                    if (part.isChecked[<any>propName] === true) {
+                for (const propName of Object.getOwnPropertyNames(partIngredient.isChecked)) {
+                    if (partIngredient.isChecked[<any>propName] === true) {
                         count++;
                     }
                 }

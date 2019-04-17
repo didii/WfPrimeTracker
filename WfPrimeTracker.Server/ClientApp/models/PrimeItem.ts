@@ -1,17 +1,14 @@
-import { PrimePart } from "./PrimePart";
-import { Ingredient } from './Ingredient';
+﻿import { PrimePartIngredient } from './PrimePartIngredient'
+import { IngredientsGroup } from './IngredientsGroup'
 
-export class PrimeItem {
-    public id!: number;
-    public name!: string;
-    public wikiUrl!: string;
-    public primeParts!: PrimePart[];
-    public ingredients!: Ingredient[];
-    public credits!: number;
-    public isChecked!: boolean;
-    public isCollapsed!: boolean;
+export interface PrimeItem {
+    id: number;
+    name: string;
+    wikiUrl: string;
+    primePartIngredients: PrimePartIngredient[];
+    credits: number;
+    ingredientsGroups: IngredientsGroup[];
 
-    public constructor(init?: Partial<PrimeItem>) {
-        Object.assign(this, init);
-    }
+    isChecked: boolean;
+    isCollapsed: boolean;
 }

@@ -1,4 +1,5 @@
-﻿using Hangfire;
+﻿using System;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WfPrimeTracker.Business;
+using WfPrimeTracker.Business.Jobs;
 using WfPrimeTracker.Server.HangfireHelpers;
 
 namespace WfPrimeTracker.Server {
@@ -45,6 +47,8 @@ namespace WfPrimeTracker.Server {
                                          Authorization = new[] { new HangfireAutorizationFilter() }
                                      });
             app.UseHangfireServer();
+
+            RecurringJob.AddOrUpdate<IScraperJob>(job => job.Invoke(), Cron.Daily(4, 0));
 
             app.UseMvc(routes => {
                 routes.MapRoute(

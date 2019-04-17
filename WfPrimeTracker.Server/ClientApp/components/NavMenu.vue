@@ -1,7 +1,7 @@
 <template>
     <nav
         data-component="navmenu"
-        class="navbar navbar-expand-md navbar-dark bg-dark"
+        class="navbar sticky-top navbar-expand-md navbar-dark bg-dark"
     >
         <a class="navbar-brand" href="#">
             <img
@@ -45,6 +45,7 @@
                         type="text"
                         class="form-control"
                         placeholder="Search..."
+                        @input="onSearchQueryChange"
                         aria-label="Username"
                         aria-describedby="basic-addon1"
                     />
@@ -53,3 +54,18 @@
         </div>
     </nav>
 </template>
+
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+import { getModule } from 'vuex-module-decorators';
+import GlobalModule from '@/stores/GlobalModule';
+
+@Component
+export default class NavMenu extends Vue {
+    private globalModule = getModule(GlobalModule);
+
+    private onSearchQueryChange(event: any) {
+        this.globalModule.search(event.target.value);
+    }
+}
+</script>

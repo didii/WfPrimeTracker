@@ -1,25 +1,28 @@
-import { Module, VuexModule } from 'vuex-module-decorators';
-import { DataService } from '@/services/DataService';
+import { Module, VuexModule, Mutation } from 'vuex-module-decorators';
+import { PrimeItemService } from '@/services/PrimeItemService';
 import { LoadService } from '@/services/LoadService';
-
-export interface IPartState {
-    [partName: string]: boolean;
-}
-export interface IItemState {
-    isChecked: boolean;
-    partsState: IPartState;
-}
-export interface IState {
-    [itemName: string]: IItemState;
-}
 
 @Module({ name: 'GlobalModule' })
 export default class GlobalModule extends VuexModule {
-    public get dataService(): DataService {
-        return new DataService();
+    private _searchQuery: string = '';
+
+    public get primeItemService(): PrimeItemService {
+        return new PrimeItemService();
     }
 
     public get loadService(): LoadService {
-        return new LoadService(this.dataService);
+        return new LoadService(this.PrimeItemService);
+    }
+
+    public get wikiBaseUrl(): string {
+        return 'https://warframe.fandom.com';
+    }
+
+    public get searchQuery(): string {
+        return this._searchQuery;
+    }
+
+    @Mutation public search(query: string) {
+        this._searchQuery = query;
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 using WfPrimeTracker.Domain;
 
 namespace WfPrimeTracker.Data.Repositories {
-    class ImageRepository : Repository<Image> {
+    class ImageRepository : PersistentRepository<Image> {
         /// <inheritdoc />
         public ImageRepository(PrimeContext context) : base(context) { }
 

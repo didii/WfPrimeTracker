@@ -11,7 +11,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { getModule } from 'vuex-module-decorators';
 import GlobalModule from '@/stores/GlobalModule';
-import { PrimeItem } from './models/PrimeItem';
+import { PrimeItem } from '@/models/PrimeItem';
 import NavMenu from '@/components/NavMenu.vue';
 
 @Component({

@@ -1,23 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WfPrimeTracker.Domain {
-    public class RelicDrop : IPersistentItem {
-        /// <inheritdoc />
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int Id { get; set; }
-
+    public class RelicDrop {
         [ForeignKey(nameof(Relic))]
         public int RelicId { get; set; }
 
-        public virtual Relic Relic { get; set; }
+        public Relic Relic { get; set; }
 
-        [ForeignKey(nameof(PrimePart))]
-        public int PrimePartId { get; set; }
+        [ForeignKey(nameof(PrimePartIngredient))]
+        public int PrimePartIngredientId { get; set; }
 
-        public virtual PrimePart PrimePart { get; set; }
+        public virtual PrimePartIngredient PrimePartIngredient { get; set; }
 
-        public DropChance DropChance { get; set; }
-
+        public virtual DropChance DropChance { get; set; }
     }
 }

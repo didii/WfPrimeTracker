@@ -3,8 +3,8 @@
         <div class="item-container">
             <div class="row">
                 <RelicCollapseButton
-                    :isOpen="isAllOpen"
-                    @click.native="isAllOpen = !isAllOpen"
+                    :isCollapsed="isAllCollapsed"
+                    @click.native="isAllCollapsed = !isAllCollapsed"
                     class="col-auto px-2 py-0"
                 />
                 <div :class="`col check-container ${isChecked ? 'checked' : ''}`">
@@ -16,9 +16,8 @@
                         />
                         {{ primeItem.name }}
                         <a
-                            :href="primeItem.wikiUrl"
+                            :href="wikiUrl"
                             target="_blank"
-                            title="Go to wiki"
                         >
                             <i class="fas fa-external-link-alt"></i>
                         </a>
@@ -28,7 +27,7 @@
         </div>
         <hr class="separator" />
         <PrimePartContainerView
-            :primeParts="primeItem.primeParts"
+            :primePartIngredients="primeItem.primePartIngredients"
             :isParentChecked="isChecked"
         />
     </div>
@@ -39,6 +38,8 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 import { PrimeItem } from '@/models/PrimeItem';
 import PrimePartContainerView from './PrimePartContainerView.vue';
 import RelicCollapseButton from './utils/RelicCollapseButton.vue';
+import { getModule } from 'vuex-module-decorators';
+import GlobalModule from '../stores/GlobalModule';
 
 @Component({
     components: {
@@ -47,19 +48,27 @@ import RelicCollapseButton from './utils/RelicCollapseButton.vue';
     }
 })
 export default class ChecklistContainerView extends Vue {
-    @Prop({ required: true }) private primeItem!: PrimeItem;
+    private globalModule = getModule(GlobalModule, this.$store);
+    @Prop({ type: Object, required: true }) private primeItem!: PrimeItem;
 
-    private get isAllOpen(): boolean {
-        return this.primeItem.primeParts.some(p => p.showRelics);
+    private get isAllCollapsed(): boolean {
+        return this.primeItem.primePartIngredients.every(p => p.isCollapsed);
     }
-    private set isAllOpen(value: boolean) {
-        this.primeItem.primeParts.forEach(p => {
-            p.showRelics = value;
+    private set isAllCollapsed(value: boolean) {
+        this.primeItem.primePartIngredients.forEach(p => {
+            p.isCollapsed = value;
         });
     }
 
     private get isChecked(): boolean {
         return this.primeItem.isChecked;
+    }
+    private set isChecked(value: boolean) {
+        this.primeItem.isChecked = value;
+    }
+
+    private get wikiUrl(): string {
+        return this.globalModule.wikiBaseUrl + this.primeItem.wikiUrl;
     }
 }
 </script>

@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Http;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
+using Microsoft.EntityFrameworkCore;
+using WfPrimeTracker.Data;
 using WfPrimeTracker.Domain;
 using WfPrimeTracker.Dtos;
 
@@ -12,22 +15,17 @@ namespace WfPrimeTracker.Business.Scrapers {
     internal class VoidRelicByRewardsScraper : IVoidRelicByRewardScraper {
         private readonly IPrimeItemScraper _primeItemScraper;
         private readonly IIdProvider _idProvider;
+        private readonly InMemoryPrimeContext _memContext;
         private const string Url = "https://warframe.fandom.com/wiki/Void_Relic/ByRewards/SimpleTable";
 
-        // Store all items temporarily in memory before pushing them all to the database
-        private Dictionary<int, PrimeItem> _primeItems = new Dictionary<int, PrimeItem>();
-        private Dictionary<int, PrimePart> _primeParts = new Dictionary<int, PrimePart>();
-        private Dictionary<int, Relic> _relics = new Dictionary<int, Relic>();
-        private Dictionary<int, RelicDrop> _relicDrops = new Dictionary<int, RelicDrop>();
-        private Dictionary<int, Ingredient> _ingredients = new Dictionary<int, Ingredient>();
-        private List<Image> _images = new List<Image>();
-
-        public VoidRelicByRewardsScraper(IPrimeItemScraper primeItemScraper, IIdProvider idProvider) {
+        public VoidRelicByRewardsScraper(IPrimeItemScraper primeItemScraper, IIdProvider idProvider, InMemoryPrimeContext memContext) {
             _primeItemScraper = primeItemScraper;
             _idProvider = idProvider;
+            _memContext = memContext;
         }
 
-        public async Task<PrimeData> GetItemData() {
+        public async Task FetchAllPrimeItemData() {
+            _memContext.Clear();
             var table = await GetTableNode();
 
             foreach (var row in table.ChildNodes) {
@@ -42,63 +40,13 @@ namespace WfPrimeTracker.Business.Scrapers {
                 // Add it to the items list
                 AddRowData(rowData);
             }
+            _memContext.SaveChanges();
 
-            foreach (var item in _primeItems.Values) {
+            foreach (var item in _memContext.PrimeItems.ToArray()) {
                 var data = await _primeItemScraper.GetData(item.WikiUrl);
-                foreach (var ingredientData in data.PartsData) {
-                    // First check if ingredient are credits
-                    if (ingredientData.Name.Equals("Credits", StringComparison.InvariantCultureIgnoreCase)) {
-                        item.Credits = ingredientData.Count;
-                        continue;
-                    }
-                    // Then try to find the part and add its count
-                    var foundPart = item.PrimeParts.FirstOrDefault(x => x.Name == ingredientData.Name);
-                    if (foundPart != null) {
-                        foundPart.Count = ingredientData.Count;
-                        continue;
-                    }
-                    // Otherwise we create or update the ingredient count
-                    var tmpIngredient = new Ingredient() {
-                        Name = ingredientData.Name,
-                        Quantity = ingredientData.Count,
-                        PrimeItemId = item.Id,
-                        PrimeItem = item,
-                    };
-                    tmpIngredient.Id = _idProvider.GetPersistentKey(tmpIngredient);
-                    if (_ingredients.TryGetValue(tmpIngredient.Id, out var ingredient)) {
-                        ingredient.Quantity += tmpIngredient.Quantity;
-                    } else {
-                        ingredient = tmpIngredient;
-                        _ingredients.Add(tmpIngredient.Id, tmpIngredient);
-                    }
-
-                    // Add ingredient to item if not already present
-                    if (item.Ingredients.All(i => i.Id != ingredient.Id)) {
-                        item.Ingredients.Add(ingredient);
-                    }
-                }
-
-                // Add the image
-                var memoryStream = new MemoryStream();
-                await data.Image.CopyToAsync(memoryStream);
-                var image = new Image() {
-                    Id = item.Id,
-                    Data = memoryStream.ToArray(),
-                };
-                _images.Add(image);
-                data.Image.Dispose();
-                item.ImageId = image.Id;
-                item.Image = image;
+                await AddItemData(item, data);
             }
-
-            return new PrimeData() {
-                Ingredients = _ingredients.Values,
-                PrimeItems = _primeItems.Values,
-                PrimeParts = _primeParts.Values,
-                Relics = _relics.Values,
-                RelicDrops = _relicDrops.Values,
-                Images = _images,
-            };
+            _memContext.SaveChanges();
         }
 
         private async Task<HtmlNode> GetTableNode() {
@@ -140,81 +88,57 @@ namespace WfPrimeTracker.Business.Scrapers {
         }
 
         private bool ValidateRowData(RowData data) {
-            if (data.ItemName == null)
+            if (data.ItemName == null || data.ItemName == "Forma")
+                return false;
+            if (!data.DropChance.HasValue)
+                return false;
+            if (!data.IsVaulted.HasValue)
+                return false;
+            if (!data.RelicTier.HasValue)
                 return false;
             return true;
         }
 
         private void AddRowData(RowData rowData) {
             // Create or retreive item
-            var tmpPrimeItem = new PrimeItem() {
+            var primeItem = AddOrUpdatePeristentItem(new PrimeItem() {
                 Name = rowData.ItemName,
                 WikiUrl = rowData.ItemUrl,
-                PrimeParts = new List<PrimePart>(),
-                Ingredients = new List<Ingredient>(),
-            };
-            tmpPrimeItem.Id = _idProvider.GetPersistentKey(tmpPrimeItem);
-            if (!_primeItems.TryGetValue(tmpPrimeItem.Id, out var primeItem)) {
-                primeItem = tmpPrimeItem;
-                _primeItems.Add(tmpPrimeItem.Id, tmpPrimeItem);
-            }
+            });
+
+            // Create or retreive part
+            var primePart = AddOrUpdatePeristentItem(new PrimePart() {
+                Name = rowData.PartName,
+            });
 
             // Create or retreive relic
-            var tmpRelic = new Relic() {
+            var relic = AddOrUpdatePeristentItem(new Relic() {
                 Tier = rowData.RelicTier.Value,
                 Name = rowData.RelicName,
                 WikiUrl = rowData.RelicUrl,
                 IsVaulted = rowData.IsVaulted.Value,
-                RelicDrops = new List<RelicDrop>(),
-            };
-            tmpRelic.Id = _idProvider.GetPersistentKey(tmpRelic);
-            if (!_relics.TryGetValue(tmpRelic.Id, out var relic)) {
-                relic = tmpRelic;
-                _relics.Add(tmpRelic.Id, tmpRelic);
-            }
+            });
 
-            // Create or retreive part
-            var tmpPrimePart = new PrimePart() {
-                PrimeItemId = primeItem.Id,
-                PrimeItem = primeItem,
-                Name = rowData.PartName,
-                Count = 1, // TODO: fetch this data
-                RelicDrops = new List<RelicDrop>(),
-            };
-            tmpPrimePart.Id = _idProvider.GetPersistentKey(tmpPrimePart);
-            if (!_primeParts.TryGetValue(tmpPrimePart.Id, out var primePart)) {
-                primePart = tmpPrimePart;
-                _primeParts.Add(tmpPrimePart.Id, tmpPrimePart);
-            }
+            // Link prime item with prime part
+            var partIngredient = AddOrUpdatePeristentItem(new PrimePartIngredient() {
+                    PrimeItemId = primeItem.Id,
+                    PrimeItem = primeItem,
+                    PrimePartId = primePart.Id,
+                    PrimePart = primePart,
+                    Count = 1 // Placeholder value
+            });
 
-            // Create or retreive relic drop
-            var tmpRelicDrop = new RelicDrop() {
-                RelicId = relic.Id,
-                Relic = relic,
-                PrimePartId = primePart.Id,
-                PrimePart = primePart,
-                DropChance = rowData.DropChance.Value,
-            };
-            tmpRelicDrop.Id = _idProvider.GetPersistentKey(tmpRelicDrop);
-            if (!_relicDrops.TryGetValue(tmpRelicDrop.Id, out var relicDrop)) {
-                relicDrop = tmpRelicDrop;
-                _relicDrops.Add(tmpRelicDrop.Id, tmpRelicDrop);
-            }
-
-            // Add part to the item if necessary
-            if (primeItem.PrimeParts.All(part => part.Id != primePart.Id)) {
-                primeItem.PrimeParts.Add(primePart);
-            }
-
-            // Add relic drop to the part if necessary
-            if (primePart.RelicDrops.All(drop => drop.Id != relicDrop.Id)) {
-                primePart.RelicDrops.Add(relicDrop);
-            }
-
-            // Add relic drop to the relic if necessary
-            if (relic.RelicDrops.All(drop => drop.Id != relicDrop.Id)) {
-                relic.RelicDrops.Add(relicDrop);
-            }
+            // Link prime part with relic
+            var relicDrop = AddOrUpdateItem(
+                new RelicDrop() {
+                    RelicId = relic.Id,
+                    Relic = relic,
+                    PrimePartIngredientId = partIngredient.Id,
+                    PrimePartIngredient = partIngredient,
+                    DropChance = rowData.DropChance.Value,
+                },
+                r => new object[] { r.RelicId, r.PrimePartIngredientId }
+            );
         }
 
         private void ParseItemCell(HtmlNode cell, RowData data) {
@@ -254,6 +178,72 @@ namespace WfPrimeTracker.Business.Scrapers {
                 data.IsVaulted = true;
             else if (text.Equals("no", StringComparison.InvariantCultureIgnoreCase))
                 data.IsVaulted = false;
+        }
+
+        private async Task AddItemData(PrimeItem primeItem, PrimeItemData itemData) {
+            // Create a base group for Ingredients
+            var baseGroup = AddOrUpdatePeristentItem(new IngredientsGroup() {
+                Name = null,
+                PrimeItemId = primeItem.Id,
+                PrimeItem = primeItem,
+            });
+
+            foreach (var ingredientData in itemData.PartsData) {
+                // Try to find the part and set its count
+                var foundPart = primeItem.PrimePartIngredients.FirstOrDefault(x => x.PrimePart.Name == ingredientData.Name);
+                if (foundPart != null) {
+                    foundPart.Count = ingredientData.Count;
+                    continue;
+                }
+                // Otherwise we create or update a resource
+                var resource = AddOrUpdatePeristentItem(new Resource() {
+                    Name = ingredientData.Name,
+                });
+
+                // And link it to the item
+                var resourceIngredient = AddOrUpdateItem(
+                    new ResourceIngredient() {
+                        IngredientsGroupId = baseGroup.Id,
+                        IngredientsGroup = baseGroup,
+                        ResourceId = resource.Id,
+                        Resource = resource,
+                        Count = ingredientData.Count,
+                    },
+                    x => new object[] { x.IngredientsGroupId, x.ResourceId }
+                );
+            }
+
+            // Add the image
+            var memoryStream = new MemoryStream();
+            await itemData.Image.CopyToAsync(memoryStream);
+            var image = AddOrUpdatePeristentItem(new Image() {
+                Id = primeItem.Id,
+                Data = memoryStream.ToArray(),
+            });
+            itemData.Image.Dispose();
+
+            // Add a link to the item
+            primeItem.ImageId = image.Id;
+            primeItem.Image = image;
+        }
+
+        private T AddOrUpdateItem<T>(T item, Func<T, object[]> keysFunc) where T : class {
+            var foundItem = _memContext.Set<T>().Find(keysFunc(item));
+            if (foundItem != null) {
+                return foundItem;
+            }
+            _memContext.Add(item);
+            return item;
+        }
+
+        private T AddOrUpdatePeristentItem<T>(T item) where T : class, IPersistentItem {
+            var localItem = _idProvider.InsertPersistentKey(item);
+            var foundItem = _memContext.Set<T>().Find(localItem.Id);
+            if (foundItem != null) {
+                return foundItem;
+            }
+            _memContext.Add(localItem);
+            return localItem;
         }
     }
 }

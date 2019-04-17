@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WfPrimeTracker.Data.Repositories;
@@ -8,12 +9,13 @@ namespace WfPrimeTracker.Data {
     public static class StartupExtensions {
         public static void AddDataServices(this IServiceCollection services, IConfiguration configuration) {
             // Repositories
-            services.AddTransient<IRepository<PrimeItem>, PrimeItemRepository>();
-            services.AddTransient<IRepository<PrimePart>, PrimePartRepository>();
-            services.AddTransient<IRepository<RelicDrop>, RelicDropRepository>();
-            services.AddTransient<IRepository<Relic>, RelicRepository>();
-            services.AddTransient<IRepository<Image>, ImageRepository>();
-            services.AddTransient<IRepository<Ingredient>, IngredientRepository>();
+            services.AddTransient<IPersistentRepository<Image>, ImageRepository>();
+            services.AddTransient<IPersistentRepository<IngredientsGroup>, IngredientsGroupRepository>();
+            services.AddTransient<IPersistentRepository<PrimeItem>, PrimeItemRepository>();
+            services.AddTransient<IPersistentRepository<PrimePart>, PrimePartRepository>();
+            services.AddTransient<IPersistentRepository<Relic>, RelicRepository>();
+            services.AddTransient<IPersistentRepository<Resource>, ResourceRepository>();
+
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
 
             // Context
@@ -22,6 +24,7 @@ namespace WfPrimeTracker.Data {
                 options.UseSqlServer(connectionString);
                 options.EnableSensitiveDataLogging();
             });
+            services.AddDbContext<InMemoryPrimeContext>(options => options.UseInMemoryDatabase("primeContext"));
         }
     }
 }

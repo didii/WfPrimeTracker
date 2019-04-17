@@ -1,6 +1,6 @@
-import { PrimeItem } from "@/models/PrimeItem";
+import { PrimeItem } from '@/models/PrimeItem';
 
-export class DataService {
+export class PrimeItemService {
     public async getAll(): Promise<PrimeItem[]> {
         var response = await fetch('/api/primeitems');
         if (response.ok) {

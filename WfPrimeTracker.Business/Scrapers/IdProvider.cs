@@ -1,28 +1,56 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using WfPrimeTracker.Domain;
 
 namespace WfPrimeTracker.Business.Scrapers {
     public class IdProvider : IIdProvider {
-        public int GetPersistentKey<T>(T obj) where T : IPersistentItem {
+        public T InsertPersistentKey<T>(T obj) where T : IPersistentItem {
+            obj.Id = GetPersistentKey(obj);
+            return obj;
+        }
+
+        private int GetPersistentKey<T>(T obj) where T : IPersistentItem {
             if (obj == null) throw new ArgumentNullException(nameof(obj));
+            int hash;
             switch (obj) {
                 case PrimeItem item:
                     // A prime item can be uniquely identified by its name
-                    return Math.Abs(GetHashcode(item.Name));
+                    hash = GetHashCode(item.Name);
+                    break;
+                case PrimePartIngredient partIngredient:
+                    // A part ingredient is uniquely identified by its item and part
+                    hash = (GetPersistentKey(partIngredient.PrimeItem) * 397) ^ GetPersistentKey(partIngredient.PrimePart);
+                    break;
                 case PrimePart part:
-                    // A prime part can be uniquely identified by its name together with the unique key of the item it's for
-                    return Math.Abs((GetPersistentKey(part.PrimeItem) * 397) ^ GetHashcode(part.Name));
+                    // A prime part can be uniquely identified by its name
+                    hash = GetHashCode(part.Name);
+                    break;
                 case Relic relic:
                     // A relic can be uniquely identified by its name and tier
-                    return Math.Abs((GetHashcode(relic.Name) * 397) ^ (int)relic.Tier);
-                case RelicDrop relicDrop:
-                    // A relic drop can be uniquely identified by the relic it drops from and its prime part
-                    return Math.Abs((GetPersistentKey(relicDrop.Relic) * 397) ^ GetPersistentKey(relicDrop.PrimePart));
-                case Ingredient ingredient:
+                    hash = (GetHashCode(relic.Name) * 397) ^ (int)relic.Tier;
+                    break;
+                case IngredientsGroup ingredientsGroup:
+                    // An ingredients group can be uniquely identified by its name and its parent
+                    hash = (GetPersistentKey(ingredientsGroup.PrimeItem) * 397) ^ GetHashCode(ingredientsGroup.Name);
+                    break;
+                case Resource resource:
                     // An ingredient can be uniquely identified by its name together with the unique key of the item it's for
-                    return Math.Abs((GetPersistentKey(ingredient.PrimeItem) * 397) ^ GetHashcode(ingredient.Name));
+                    hash = GetHashCode(resource.Name);
+                    break;
+                case Image image:
+                    // An image can be uniquely defined by its data
+                    hash = GetHashCode(image.Data.Select(b => (char)b).ToArray());
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(obj), $"Object given can only be of the pre-existing types");
             }
-            throw new ArgumentOutOfRangeException(nameof(obj), $"Object given can only be of the pre-existing types");
+            return Math.Abs(hash);
+        }
+
+        private int GetHashCode(string value) {
+            if (value == null) return 0;
+            return GetHashCode(value.ToLower().ToCharArray());
         }
 
         /// <summary>
@@ -30,11 +58,11 @@ namespace WfPrimeTracker.Business.Scrapers {
         /// computed value is consistent across all systems.
         /// Code taken from https://gist.github.com/gerriten/7542231#file-gethashcode32-net
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="chars"></param>
         /// <returns></returns>
-        private int GetHashcode(string value) {
-            var chars = value.ToLower().ToCharArray();
-            var lastCharInd = chars.Length - 1;
+        private int GetHashCode(IReadOnlyList<char> chars) {
+            if (chars == null) throw new ArgumentNullException(nameof(chars));
+            var lastCharInd = chars.Count - 1;
             var num1 = 0x15051505;
             var num2 = num1;
             var ind = 0;

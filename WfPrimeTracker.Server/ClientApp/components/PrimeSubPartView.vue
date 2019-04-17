@@ -4,7 +4,7 @@
         :class="`prime-sub-part ${isChecked ? 'checked' : ''}`"
     >
         <input type="checkbox" v-model="isChecked" :disabled="isParentChecked" />
-        {{ primePart.name }} {{ index > 0 ? index + 1 : "" }}
+        {{ primePartIngredient.primePart.name }} {{ index > 0 ? index + 1 : "" }}
         <i
             :class="`fas fa-${iconName}`"
             :title="dropChanceLabel"
@@ -16,18 +16,19 @@
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import { PrimePart } from '@/models/PrimePart';
 import { DropChance } from '@/models/DropChance.enum';
+import { PrimePartIngredient } from '../models/PrimePartIngredient';
 
 @Component
 export default class PrimeSubPartView extends Vue {
     @Prop({ type: Object, required: true })
-    private primePart!: PrimePart;
+    private primePartIngredient!: PrimePartIngredient;
     @Prop({ type: Number, required: true })
     private index!: number;
     @Prop({ type: Boolean, required: true })
     public isParentChecked!: boolean;
 
     private get dropChance(): DropChance {
-        return this.primePart.relicDrops[0].dropChance;
+        return this.primePartIngredient.relicDrops[0].dropChance;
     }
 
     private get dropChanceLabel(): string {
@@ -48,10 +49,10 @@ export default class PrimeSubPartView extends Vue {
     }
 
     private get isChecked(): boolean {
-        return this.isParentChecked || this.primePart.isChecked[this.index];
+        return this.isParentChecked || this.primePartIngredient.isChecked[this.index];
     }
     private set isChecked(value: boolean) {
-        this.primePart.isChecked[this.index] = value;
+        this.primePartIngredient.isChecked[this.index] = value;
     }
 }
 </script>

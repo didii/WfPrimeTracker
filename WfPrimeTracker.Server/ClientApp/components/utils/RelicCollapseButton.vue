@@ -1,6 +1,6 @@
 <template>
     <button class="btn">
-        <i :class="`fas fa-caret-right ${isOpen ? 'caret-open' : ''}`"></i>
+        <i :class="`fas fa-caret-right ${isCollapsed ? '' : 'caret-open'}`"></i>
     </button>
 </template>
 
@@ -9,7 +9,7 @@ import { Component, Vue, Prop, Emit } from 'vue-property-decorator';
 
 @Component
 export default class RelicCollapseButton extends Vue {
-    @Prop({ required: true }) public isOpen!: boolean;
+    @Prop({ type: Boolean, required: true }) public isCollapsed!: boolean;
 }
 </script>
 

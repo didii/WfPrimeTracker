@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 using WfPrimeTracker.Domain;
 
 namespace WfPrimeTracker.Data.Repositories {
-    class RelicRepository : Repository<Relic> {
+    class RelicRepository : PersistentRepository<Relic> {
         /// <inheritdoc />
         public RelicRepository(PrimeContext context) : base(context) { }
 
@@ -15,11 +15,12 @@ namespace WfPrimeTracker.Data.Repositories {
                     Tier = item.Tier,
                     WikiUrl = item.WikiUrl,
                     IsVaulted = item.IsVaulted,
+                    ImageId = item.ImageId,
                 };
             }
         }
 
         /// <inheritdoc />
-        protected override int PropertyUpdateCount => 4;
+        protected override int PropertyUpdateCount => 5;
     }
 }

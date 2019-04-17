@@ -2,7 +2,7 @@
     <div data-component="reliccontainerview" class="relics-container">
         <RelicView
             v-for="relicDrop of relicDrops"
-            :key="relicDrop.id"
+            :key="relicDrop.relic.id"
             :relicDrop="relicDrop"
         />
     </div>
@@ -19,7 +19,7 @@ import RelicView from '@/components/RelicView.vue';
     }
 })
 export default class RelicContainerView extends Vue {
-    @Prop({ required: true }) relicDrops!: RelicDrop[];
+    @Prop({ type: Array, required: true }) relicDrops!: RelicDrop[];
 }
 </script>
 

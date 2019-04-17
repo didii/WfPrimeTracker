@@ -2,23 +2,23 @@
     <div data-component="primepartview" class="prime-part m-0 w-100">
         <div class="row">
             <RelicCollapseButton
-                :isOpen="showRelics"
+                :isCollapsed="isCollapsed"
                 @click.native="onToggleCollapse"
                 class="col-auto px-2 py-0"
             />
             <div class="col prime-sub-part-container">
                 <PrimeSubPartView
-                    v-for="index in primePart.count"
+                    v-for="index in primePartIngredient.count"
                     :key="index"
-                    :primePart="primePart"
+                    :primePartIngredient="primePartIngredient"
                     :index="index - 1"
                     :isParentChecked="isParentChecked"
                     class="prime-sub-part w-100 m-0 px-2"
                 />
             </div>
             <RelicContainerView
-                v-if="showRelics"
-                :relicDrops="primePart.relicDrops"
+                v-if="!isCollapsed"
+                :relicDrops="primePartIngredient.relicDrops"
                 class="relics-container col-12 col-md-5 mt-1"
             />
         </div>
@@ -32,6 +32,7 @@ import { DropChance } from '@/models/DropChance.enum';
 import RelicCollapseButton from './utils/RelicCollapseButton.vue';
 import PrimeSubPartView from './PrimeSubPartView.vue';
 import RelicContainerView from './RelicContainerView.vue';
+import { PrimePartIngredient } from '../models/PrimePartIngredient';
 
 @Component({
     components: {
@@ -41,11 +42,11 @@ import RelicContainerView from './RelicContainerView.vue';
     },
 })
 export default class PrimePartView extends Vue {
-    @Prop({ required: true }) public primePart!: PrimePart;
-    @Prop({required: true}) public isParentChecked!: boolean;
+    @Prop({ type: Object, required: true }) public primePartIngredient!: PrimePartIngredient;
+    @Prop({ type: Boolean, required: true}) public isParentChecked!: boolean;
 
     private get dropChance(): DropChance {
-        return this.primePart.relicDrops[0].dropChance;
+        return this.primePartIngredient.relicDrops[0].dropChance;
     }
 
     private get dropChanceLabel(): string {
@@ -65,16 +66,12 @@ export default class PrimePartView extends Vue {
         }
     }
 
-    private get isSelected(): boolean {
-        return this.primePart.isChecked[0];
-    }
-
-    private get showRelics(): boolean {
-        return this.primePart.showRelics;
+    private get isCollapsed(): boolean {
+        return this.primePartIngredient.isCollapsed;
     }
 
     private onToggleCollapse() {
-        this.primePart.showRelics = !this.primePart.showRelics;
+        this.primePartIngredient.isCollapsed = !this.primePartIngredient.isCollapsed;
     }
 }
 </script>

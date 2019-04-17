@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>3.3</TypeScriptToolsVersion>
+    <UserSecretsId>66878ce6-e344-4842-927f-131c42f1d2fd</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +23,7 @@
     <PackageReference Include="Hangfire.SqlServer" Version="1.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.1" />
+    <PackageReference Include="MTT" Version="0.5.5" />
   </ItemGroup>
 
   <ItemGroup>

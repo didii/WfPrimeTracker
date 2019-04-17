@@ -13,13 +13,11 @@ using WfPrimeTracker.Dtos;
 
 namespace WfPrimeTracker.Business.Services {
     internal class PrimeItemService : IPrimeItemService {
-        private readonly IIdProvider _idProvider;
-        private readonly IRepository<PrimeItem> _repo;
-        private readonly IRepository<Image> _imageRepo;
+        private readonly IPersistentRepository<PrimeItem> _repo;
+        private readonly IPersistentRepository<Image> _imageRepo;
         private readonly IMapper _mapper;
 
-        public PrimeItemService(IIdProvider idProvider, IRepository<PrimeItem> repo, IRepository<Image> imageRepo, IMapper mapper) {
-            _idProvider = idProvider;
+        public PrimeItemService(IPersistentRepository<PrimeItem> repo, IPersistentRepository<Image> imageRepo, IMapper mapper) {
             _repo = repo;
             _imageRepo = imageRepo;
             _mapper = mapper;
@@ -28,10 +26,14 @@ namespace WfPrimeTracker.Business.Services {
         /// <inheritdoc />
         public async Task<IEnumerable<PrimeItemDto>> GetAll() {
             var entity = await _repo.GetAll(query => query
-                                                    .Include(item => item.PrimeParts)
-                                                        .ThenInclude(part => part.RelicDrops)
-                                                        .ThenInclude(drop => drop.Relic)
-                                                    .Include(item => item.Ingredients));
+                                                    .Include(item => item.PrimePartIngredients)
+                                                        .ThenInclude(i => i.PrimePart)
+                                                    .Include(part => part.PrimePartIngredients)
+                                                        .ThenInclude(i => i.RelicDrops)
+                                                                .ThenInclude(drop => drop.Relic)
+                                                    .Include(item => item.IngredientsGroups)
+                                                        .ThenInclude(g => g.ResourceIngredients)
+                                                            .ThenInclude(i => i.Resource));
             var result = _mapper.Map<IEnumerable<PrimeItemDto>>(entity);
             return result;
         }
@@ -45,20 +47,9 @@ namespace WfPrimeTracker.Business.Services {
 
         /// <inheritdoc />
         public async Task<MemoryStream> GetImage(int id) {
-            var entity = await _imageRepo.Get(id);
-            var result = new MemoryStream(entity.Data);
+            var entity = await _repo.Get(id, query => query.Include(i => i.Image));
+            var result = new MemoryStream(entity.Image.Data);
             return result;
-        }
-
-        private void AddPersistentKeys(PrimeItem item) {
-            item.Id = _idProvider.GetPersistentKey(item);
-            foreach (var primePart in item.PrimeParts) {
-                primePart.Id = _idProvider.GetPersistentKey(primePart);
-                foreach (var relicDrop in primePart.RelicDrops) {
-                    relicDrop.Id = _idProvider.GetPersistentKey(relicDrop);
-                    relicDrop.Relic.Id = _idProvider.GetPersistentKey(relicDrop.Relic);
-                }
-            }
         }
     }
 }

@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using WfPrimeTracker.Domain;
 
 namespace WfPrimeTracker.Data.Repositories {
-    class Repository<T> : IRepository<T> where T : class, IPersistentItem {
+    public class PersistentRepository<T> : IPersistentRepository<T> where T : class, IPersistentItem {
         private readonly PrimeContext _context;
 
-        public Repository(PrimeContext context) {
+        public PersistentRepository(PrimeContext context) {
             _context = context;
         }
 

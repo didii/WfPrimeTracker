@@ -18,7 +18,7 @@ import { DropChance } from '../models/DropChance.enum';
 
 @Component
 export default class RelicView extends Vue {
-    @Prop({ required: true }) public relicDrop!: RelicDrop;
+    @Prop({ type: Object, required: true }) public relicDrop!: RelicDrop;
 
     private get label(): string {
         return `${RelicTier.toString(this.relicDrop.relic.tier)} ${this.relicDrop.relic.name}`;
@@ -78,7 +78,7 @@ export default class RelicView extends Vue {
         left: 0;
         height: 100%;
         width: 100%;
-        background-color: rgba(255, 255, 255, 0.5);
+        background-color: rgba(255, 255, 255, 0.40);
         pointer-events: none;
     }
     span {

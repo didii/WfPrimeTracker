@@ -1,5 +1,4 @@
-﻿using System;
-using WfPrimeTracker.Domain;
+﻿using WfPrimeTracker.Domain;
 
 namespace WfPrimeTracker.Dtos {
     public class RelicDto {

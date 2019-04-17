@@ -3,11 +3,15 @@
         data-component="ingredientscontainerview"
         class="ingredients-container"
     >
-        <div class="ingredients row border-top">
+        <div
+            v-for="ingredientsGroup in ingredientsGroups"
+            :key="ingredientsGroup.id"
+            class="ingredients row"
+        >
             <IngredientView
-                v-for="ingredient in ingredients"
-                :key="ingredient.id"
-                :ingredient="ingredient"
+                v-for="resourceIngredient in ingredientsGroup.resourceIngredients"
+                :key="resourceIngredient.resource.id"
+                :resourceIngredient="resourceIngredient"
                 class="ingredient col"
             />
         </div>
@@ -16,7 +20,8 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import { Ingredient } from '../models/Ingredient';
+import { ResourceIngredient } from '@/models/ResourceIngredient';
+import { IngredientsGroup } from '@/models/IngredientsGroup';
 import IngredientView from './IngredientView.vue';
 
 @Component({
@@ -25,7 +30,7 @@ import IngredientView from './IngredientView.vue';
     }
 })
 export default class IngredientsContainerView extends Vue {
-    @Prop({ required: true }) public ingredients!: Ingredient[];
+    @Prop({ type: Array, required: true }) public ingredientsGroups!: IngredientsGroup[];
 }
 </script>
 

@@ -1,8 +1,8 @@
 <template>
     <div data-component="infocontainerview" class="info-container">
-        <div class="image-container text-center">
+        <div class="image-container text-center border-bottom">
             <img
-                src="https://vignette.wikia.nocookie.net/warframe/images/8/8e/BansheePrimeIcon.png/revision/latest?cb=20170308023206"
+                :src="imageUrl"
                 alt=""
                 class="image"
             />
@@ -13,14 +13,14 @@
                 {{ showIngredients ? "Hide" : "Show" }} ingredients
             </button>
         </div>
-        <IngredientsContainerView v-if="showIngredients" :ingredients="primeItem.ingredients" />
+        <IngredientsContainerView v-if="showIngredients" :ingredientsGroups="primeItem.ingredientsGroups" />
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import IngredientsContainerView from './IngredientsContainerView.vue';
-import { PrimeItem } from '../models/PrimeItem';
+import { PrimeItem } from '@/models/PrimeItem';
 
 @Component({
     components: {
@@ -28,9 +28,13 @@ import { PrimeItem } from '../models/PrimeItem';
     }
 })
 export default class InfoContainerView extends Vue {
-    @Prop({ required: true }) public primeItem!: PrimeItem;
+    @Prop({ type: Object, required: true }) public primeItem!: PrimeItem;
 
     private showIngredients: boolean = false;
+
+    private get imageUrl(): string {
+        return `/api/primeitems/${this.primeItem.id}/image`;
+    }
 
     private onToggleIngredients() {
         this.showIngredients = !this.showIngredients;
@@ -43,7 +47,7 @@ export default class InfoContainerView extends Vue {
     .image-container {
         position: relative;
         img {
-            max-width: 300px;
+            max-width: 145px;
         }
         .hide-button {
             position: absolute;

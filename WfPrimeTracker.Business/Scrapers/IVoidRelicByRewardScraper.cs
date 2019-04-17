@@ -5,6 +5,6 @@ using WfPrimeTracker.Dtos;
 
 namespace WfPrimeTracker.Business.Scrapers {
     internal interface IVoidRelicByRewardScraper {
-        Task<PrimeData> GetItemData();
+        Task FetchAllPrimeItemData();
     }
 }

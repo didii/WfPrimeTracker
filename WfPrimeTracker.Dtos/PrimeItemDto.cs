@@ -5,8 +5,7 @@ namespace WfPrimeTracker.Dtos {
         public int Id { get; set; }
         public string Name { get; set; }
         public string WikiUrl { get; set; }
-        public ICollection<PrimePartDto> PrimeParts { get; set; }
-        public int Credits { get; set; }
-        public ICollection<IngredientDto> Ingredients { get; set; }
+        public ICollection<PrimePartIngredientDto> PrimePartIngredients { get; set; }
+        public ICollection<IngredientsGroupDto> IngredientsGroups { get; set; }
     }
 }

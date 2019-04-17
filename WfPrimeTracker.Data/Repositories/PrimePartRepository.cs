@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 using WfPrimeTracker.Domain;
 
 namespace WfPrimeTracker.Data.Repositories {
-    class PrimePartRepository : Repository<PrimePart> {
+    class PrimePartRepository : PersistentRepository<PrimePart> {
         /// <inheritdoc />
         public PrimePartRepository(PrimeContext context) : base(context) { }
 
@@ -12,13 +12,12 @@ namespace WfPrimeTracker.Data.Repositories {
             get {
                 return (db, item) => new PrimePart() {
                     Name = item.Name,
-                    Count = item.Count,
-                    PrimeItemId = item.PrimeItemId,
+                    ImageId = item.ImageId,
                 };
             }
         }
 
         /// <inheritdoc />
-        protected override int PropertyUpdateCount => 3;
+        protected override int PropertyUpdateCount => 2;
     }
 }

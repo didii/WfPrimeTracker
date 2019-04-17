@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -59,15 +58,5 @@ namespace WfPrimeTracker.Business.Scrapers {
 
             return result;
         }
-    }
-
-    public class PrimeItemData {
-        public Stream Image { get; set; }
-        public List<PrimePartData> PartsData { get; set; } = new List<PrimePartData>();
-    }
-
-    public class PrimePartData {
-        public string Name { get; set; }
-        public int Count { get; set; }
     }
 }

@@ -1,12 +1,12 @@
 <template>
     <div data-component="primeitemview" class="prime-item-view">
         <div class="row">
-            <div class="collapse-container">
+            <!-- <div class="collapse-container">
                 <i class="fas fa-angle-down"></i>
-            </div>
+            </div> -->
             <InfoContainerView
                 :primeItem="primeItem"
-                class="info-container col-md-auto col-12"
+                class="info-container col-md-2 col-12"
             />
             <ChecklistContainerView :primeItem="primeItem" class="col" />
         </div>
@@ -26,7 +26,7 @@ import ChecklistContainerView from './ChecklistContainerView.vue';
     }
 })
 export default class PrimeItemView extends Vue {
-    @Prop({ required: true }) public primeItem!: PrimeItem;
+    @Prop({ type: Object, required: true }) public primeItem!: PrimeItem;
 }
 </script>
 
@@ -41,6 +41,7 @@ export default class PrimeItemView extends Vue {
         border: 2px solid #c3c3c3;
         border-radius: 0.5rem;
         background-color: white;
+        z-index: 5;
     }
     .info-container {
         border-bottom: 2px solid gray;
