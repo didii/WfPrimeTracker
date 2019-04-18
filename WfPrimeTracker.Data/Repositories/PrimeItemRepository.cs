@@ -32,22 +32,42 @@ namespace WfPrimeTracker.Data.Repositories {
                                                      .ToArrayAsync();
 
             foreach (var item in result) {
-                if (item.PrimePartIngredients == null)
-                    continue;
-                item.PrimePartIngredients =
-                    item.PrimePartIngredients.OrderBy(ingredient => ingredient.PrimePart.Name).ToList();
-                foreach (var ingredient in item.PrimePartIngredients) {
-                    if (ingredient.RelicDrops == null)
-                        continue;
-                    ingredient.RelicDrops = ingredient.RelicDrops
-                                                      .OrderBy(x => x.DropChance)
-                                                      .ThenBy(x => x.Relic.Tier)
-                                                      .ThenBy(x => x.Relic.Name)
-                                                      .ToList();
+                if (item.PrimePartIngredients != null) {
+                    item.PrimePartIngredients = item.PrimePartIngredients.OrderBy(ingredient => ingredient.PrimePart.Name).ToList();
+                    foreach (var ingredient in item.PrimePartIngredients) {
+                        if (ingredient.RelicDrops != null)
+                            ingredient.RelicDrops = ingredient.RelicDrops
+                                                              .OrderBy(x => x.DropChance)
+                                                              .ThenBy(x => x.Relic.Tier)
+                                                              .ThenBy(x => x.Relic.Name)
+                                                              .ToList();
+                    }
+                }
+                if (item.IngredientsGroups != null) {
+                    item.IngredientsGroups = item.IngredientsGroups.OrderBy(g => g.Name).ToList();
+                    foreach (var ingredientGroup in item.IngredientsGroups) {
+                        if (ingredientGroup.ResourceIngredients != null) {
+                            ingredientGroup.ResourceIngredients = ingredientGroup
+                                                                 .ResourceIngredients
+                                                                 .OrderBy(x => x.Resource, new ResourceComparer())
+                                                                 .ToList();
+                        }
+                    }
                 }
             }
-
             return result;
+        }
+    }
+
+    internal class ResourceComparer : IComparer<Resource> {
+        /// <inheritdoc />
+        public int Compare(Resource x, Resource y) {
+            if (x == null && y == null) return 0;
+            if (x == null) return -1;
+            if (y == null) return 1;
+            if (x.Name == "Credits") return -1;
+            if (y.Name == "Credits") return 1;
+            return string.Compare(x.Name, y.Name, StringComparison.Ordinal);
         }
     }
 }

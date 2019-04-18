@@ -15,19 +15,22 @@ namespace WfPrimeTracker.Business.Scrapers {
     internal class VoidRelicByRewardsScraper : IVoidRelicByRewardScraper {
         private readonly IPrimeItemScraper _primeItemScraper;
         private readonly IIdProvider _idProvider;
-        private readonly InMemoryPrimeContext _memContext;
+        private readonly PrimeContext _context;
         private const string Url = "https://warframe.fandom.com/wiki/Void_Relic/ByRewards/SimpleTable";
 
-        public VoidRelicByRewardsScraper(IPrimeItemScraper primeItemScraper, IIdProvider idProvider, InMemoryPrimeContext memContext) {
+        public VoidRelicByRewardsScraper(IPrimeItemScraper primeItemScraper,
+                                         IIdProvider idProvider,
+                                         PrimeContext context) {
             _primeItemScraper = primeItemScraper;
             _idProvider = idProvider;
-            _memContext = memContext;
+            _context = context;
         }
 
         public async Task FetchAllPrimeItemData() {
-            _memContext.Clear();
             var table = await GetTableNode();
 
+            // Parse the Void Relic By Rewards table to get all prime items and their drops
+            var primeItems = new List<PrimeItem>();
             foreach (var row in table.ChildNodes) {
                 if (row.Name != "tr")
                     continue;
@@ -38,15 +41,17 @@ namespace WfPrimeTracker.Business.Scrapers {
                 if (!ValidateRowData(rowData))
                     continue;
                 // Add it to the items list
-                AddRowData(rowData);
+                var item = await AddRowData(rowData);
+                primeItems.Add(item);
             }
-            _memContext.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            foreach (var item in _memContext.PrimeItems.ToArray()) {
+            // Go to each item page and get ingredients/image data
+            foreach (var item in primeItems) {
                 var data = await _primeItemScraper.GetData(item.WikiUrl);
                 await AddItemData(item, data);
             }
-            _memContext.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         private async Task<HtmlNode> GetTableNode() {
@@ -99,20 +104,20 @@ namespace WfPrimeTracker.Business.Scrapers {
             return true;
         }
 
-        private void AddRowData(RowData rowData) {
+        private async Task<PrimeItem> AddRowData(RowData rowData) {
             // Create or retreive item
-            var primeItem = AddOrUpdatePeristentItem(new PrimeItem() {
+            var primeItem = await AddOrUpdatePeristentItem(new PrimeItem() {
                 Name = rowData.ItemName,
                 WikiUrl = rowData.ItemUrl,
             });
 
             // Create or retreive part
-            var primePart = AddOrUpdatePeristentItem(new PrimePart() {
+            var primePart = await AddOrUpdatePeristentItem(new PrimePart() {
                 Name = rowData.PartName,
             });
 
             // Create or retreive relic
-            var relic = AddOrUpdatePeristentItem(new Relic() {
+            var relic = await AddOrUpdatePeristentItem(new Relic() {
                 Tier = rowData.RelicTier.Value,
                 Name = rowData.RelicName,
                 WikiUrl = rowData.RelicUrl,
@@ -120,7 +125,7 @@ namespace WfPrimeTracker.Business.Scrapers {
             });
 
             // Link prime item with prime part
-            var partIngredient = AddOrUpdatePeristentItem(new PrimePartIngredient() {
+            var partIngredient = await AddOrUpdatePeristentItem(new PrimePartIngredient() {
                     PrimeItemId = primeItem.Id,
                     PrimeItem = primeItem,
                     PrimePartId = primePart.Id,
@@ -129,7 +134,7 @@ namespace WfPrimeTracker.Business.Scrapers {
             });
 
             // Link prime part with relic
-            var relicDrop = AddOrUpdateItem(
+            var relicDrop = await AddOrUpdateItem(
                 new RelicDrop() {
                     RelicId = relic.Id,
                     Relic = relic,
@@ -139,6 +144,8 @@ namespace WfPrimeTracker.Business.Scrapers {
                 },
                 r => new object[] { r.RelicId, r.PrimePartIngredientId }
             );
+
+            return primeItem;
         }
 
         private void ParseItemCell(HtmlNode cell, RowData data) {
@@ -182,68 +189,87 @@ namespace WfPrimeTracker.Business.Scrapers {
 
         private async Task AddItemData(PrimeItem primeItem, PrimeItemData itemData) {
             // Create a base group for Ingredients
-            var baseGroup = AddOrUpdatePeristentItem(new IngredientsGroup() {
-                Name = null,
-                PrimeItemId = primeItem.Id,
-                PrimeItem = primeItem,
-            });
-
-            foreach (var ingredientData in itemData.PartsData) {
-                // Try to find the part and set its count
-                var foundPart = primeItem.PrimePartIngredients.FirstOrDefault(x => x.PrimePart.Name == ingredientData.Name);
-                if (foundPart != null) {
-                    foundPart.Count = ingredientData.Count;
-                    continue;
+            foreach (var ingredientGroupData in itemData.PartsData) {
+                // Create the ingredients group
+                var groupName = ingredientGroupData.Key;
+                if (string.IsNullOrEmpty(groupName)) {
+                    groupName = null;
                 }
-                // Otherwise we create or update a resource
-                var resource = AddOrUpdatePeristentItem(new Resource() {
-                    Name = ingredientData.Name,
+                var group = await AddOrUpdatePeristentItem(new IngredientsGroup() {
+                    Name = groupName,
+                    PrimeItemId = primeItem.Id,
+                    PrimeItem = primeItem,
                 });
 
-                // And link it to the item
-                var resourceIngredient = AddOrUpdateItem(
-                    new ResourceIngredient() {
-                        IngredientsGroupId = baseGroup.Id,
-                        IngredientsGroup = baseGroup,
-                        ResourceId = resource.Id,
-                        Resource = resource,
-                        Count = ingredientData.Count,
-                    },
-                    x => new object[] { x.IngredientsGroupId, x.ResourceId }
-                );
+                // Add all ingredients to it
+                foreach (var ingredientData in ingredientGroupData.Value) {
+                    // Try to find the part and set its count
+                    var foundPart = primeItem.PrimePartIngredients.FirstOrDefault(x => x.PrimePart.Name.StartsWith(ingredientData.Name));
+                    if (foundPart != null) {
+                        foundPart.Count = ingredientData.Count;
+                        // Add image
+                        var partImage = await AddOrUpdatePeristentItem(new Image() {
+                            Data = await StreamToByteArray(ingredientData.Image),
+                            PrimePart = foundPart.PrimePart,
+                        });
+                        continue;
+                    }
+                    // Otherwise we create or update a resource
+                    var resourceImage = await AddOrUpdatePeristentItem(new Image() {
+                        Data = await StreamToByteArray(ingredientData.Image),
+                    });
+                    var resource = await AddOrUpdatePeristentItem(new Resource() {
+                        Name = ingredientData.Name,
+                        ImageId = resourceImage.Id,
+                        Image = resourceImage,
+                    });
+
+                    // And link it to the item
+                    var resourceIngredient = await AddOrUpdateItem(
+                        new ResourceIngredient() {
+                            IngredientsGroupId = group.Id,
+                            IngredientsGroup = group,
+                            ResourceId = resource.Id,
+                            Resource = resource,
+                            Count = ingredientData.Count,
+                        },
+                        x => new object[] { x.IngredientsGroupId, x.ResourceId }
+                    );
+                }
             }
 
             // Add the image
-            var memoryStream = new MemoryStream();
-            await itemData.Image.CopyToAsync(memoryStream);
-            var image = AddOrUpdatePeristentItem(new Image() {
-                Id = primeItem.Id,
-                Data = memoryStream.ToArray(),
+            var image = await AddOrUpdatePeristentItem(new Image() {
+                Data = await StreamToByteArray(itemData.Image),
+                PrimeItem = primeItem,
             });
-            itemData.Image.Dispose();
-
-            // Add a link to the item
-            primeItem.ImageId = image.Id;
-            primeItem.Image = image;
         }
 
-        private T AddOrUpdateItem<T>(T item, Func<T, object[]> keysFunc) where T : class {
-            var foundItem = _memContext.Set<T>().Find(keysFunc(item));
+        private async Task<T> AddOrUpdateItem<T>(T item, Func<T, object[]> keysFunc) where T : class {
+            var foundItem = await _context.Set<T>().FindAsync(keysFunc(item));
             if (foundItem != null) {
                 return foundItem;
             }
-            _memContext.Add(item);
+            _context.Add(item);
             return item;
         }
 
-        private T AddOrUpdatePeristentItem<T>(T item) where T : class, IPersistentItem {
+        private async Task<T> AddOrUpdatePeristentItem<T>(T item) where T : class, IPersistentItem {
             var localItem = _idProvider.InsertPersistentKey(item);
-            var foundItem = _memContext.Set<T>().Find(localItem.Id);
+            var foundItem = await _context.Set<T>().FindAsync(localItem.Id);
             if (foundItem != null) {
                 return foundItem;
             }
-            _memContext.Add(localItem);
+            _context.Add(localItem);
             return localItem;
+        }
+
+        private async Task<byte[]> StreamToByteArray(Stream stream) {
+            var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            var result = memoryStream.ToArray();
+            stream.Dispose();
+            return result;
         }
     }
 }

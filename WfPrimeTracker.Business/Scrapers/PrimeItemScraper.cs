@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 
@@ -11,13 +14,7 @@ namespace WfPrimeTracker.Business.Scrapers {
 
         private static readonly HttpClient Client = new HttpClient();
 
-        private readonly Dictionary<string, PrimeItemData> _data = new Dictionary<string, PrimeItemData>();
-
         public async Task<PrimeItemData> GetData(string wikiUrl) {
-            if (_data.TryGetValue(wikiUrl, out var cached)) {
-                return cached;
-            }
-
             var web = new HtmlWeb();
             var doc = await web.LoadFromWebAsync($"{BaseUrl}{wikiUrl}");
 
@@ -41,22 +38,68 @@ namespace WfPrimeTracker.Business.Scrapers {
                 result.Image = webClient.OpenRead(new Uri(src));
             }
 
+            AddPartData(result, doc);
+
+            return result;
+        }
+
+        private void AddPartData(PrimeItemData data, HtmlDocument doc) {
             var cells = doc.DocumentNode.SelectNodes(@"//*[@id='mw-content-text']/table[@class='foundrytable']//td");
+            var currentKey = "";
             foreach (var cell in cells) {
                 var a = cell.SelectSingleNode(@"./a");
                 if (a == null) continue;
+
+                // Check if next part is encountered
+                if (cell.Attributes["colspan"]?.Value == "6") {
+                    // Set key if so
+                    currentKey = a.InnerText;
+                    continue;
+                }
+
+                // Get name of part
                 var title = a.Attributes["title"]?.Value;
                 if (string.IsNullOrEmpty(title)) continue;
+
+                // Get count
                 var innerText = cell.InnerText.Replace(",", "").Trim();
-                if (int.TryParse(innerText, out var count)) {
-                    result.PartsData.Add(new PrimePartData() {
-                        Name = title,
-                        Count = count,
-                    });
+                int count;
+                if (string.IsNullOrWhiteSpace(innerText)) {
+                    count = 1;
+                } else if (int.TryParse(innerText, out var tmpCount)) {
+                    count = tmpCount;
+                } else {
+                    continue;
                 }
+
+                // Get image
+                var img = a.SelectSingleNode(@"./img");
+                var src = img?.Attributes["data-src"]?.Value ?? img?.Attributes["src"]?.Value;
+                if (src == null) continue;
+                var regex = new Regex(@"/scale-to-width-down/(\d+)");
+                src = regex.Replace(src, "/scale-to-width-down/150", 1);
+                Stream image;
+                using (var webClient = new WebClient()) {
+                    try {
+                        image = webClient.OpenRead(new Uri(src));
+                    }
+                    catch (Exception e) {
+                        continue;
+                    }
+                }
+
+                // Add data
+                var partData = new PrimePartData() {
+                    Name = title,
+                    Count = count,
+                    Image = image,
+                };
+                if (!data.PartsData.ContainsKey(currentKey)) {
+                    data.PartsData.Add(currentKey, new List<PrimePartData>());
+                }
+                data.PartsData[currentKey].Add(partData);
             }
 
-            return result;
         }
     }
 }

@@ -6,15 +6,26 @@
                 @click.native="onToggleCollapse"
                 class="col-auto px-2 py-0"
             />
-            <div class="col prime-sub-part-container">
-                <PrimeSubPartView
-                    v-for="index in primePartIngredient.count"
-                    :key="index"
-                    :primePartIngredient="primePartIngredient"
-                    :index="index - 1"
-                    :isParentChecked="isParentChecked"
-                    class="prime-sub-part w-100 m-0 px-2"
-                />
+            <div class="col prime-sub-part-checklist">
+                <div class="row m-0">
+                    <div class="col-auto image-container">
+                        <img
+                            :src="imgUrl"
+                            width="30"
+                            :style="isBlueprint ? { transform: 'scale(0.7)' } : null"
+                        />
+                    </div>
+                    <div class="col prime-sub-part-container">
+                        <PrimeSubPartView
+                            v-for="index in primePartIngredient.count"
+                            :key="index"
+                            :primePartIngredient="primePartIngredient"
+                            :index="index - 1"
+                            :isParentChecked="isParentChecked"
+                            class="prime-sub-part w-100"
+                        />
+                    </div>
+                </div>
             </div>
             <RelicContainerView
                 v-if="!isCollapsed"
@@ -43,7 +54,7 @@ import { PrimePartIngredient } from '../models/PrimePartIngredient';
 })
 export default class PrimePartView extends Vue {
     @Prop({ type: Object, required: true }) public primePartIngredient!: PrimePartIngredient;
-    @Prop({ type: Boolean, required: true}) public isParentChecked!: boolean;
+    @Prop({ type: Boolean, required: true }) public isParentChecked!: boolean;
 
     private get dropChance(): DropChance {
         return this.primePartIngredient.relicDrops[0].dropChance;
@@ -66,6 +77,14 @@ export default class PrimePartView extends Vue {
         }
     }
 
+    private get imgUrl(): string {
+        return `/api/primeparts/${this.primePartIngredient.primePart.id}/image`;
+    }
+
+    private get isBlueprint(): boolean {
+        return this.primePartIngredient.primePart.name == 'Blueprint';
+    }
+
     private get isCollapsed(): boolean {
         return this.primePartIngredient.isCollapsed;
     }
@@ -77,11 +96,18 @@ export default class PrimePartView extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.prime-sub-part-container {
-    display: flex;
-    flex-direction: column;
-    .prime-sub-part {
-        flex: 1 0;
+.prime-sub-part-checklist > .row {
+    height: 100%;
+    .image-container {
+        display: flex;
+        align-items: center;
+    }
+    .prime-sub-part-container {
+        display: flex;
+        flex-direction: column;
+        .prime-sub-part {
+            flex: 1 0;
+        }
     }
 }
 </style>

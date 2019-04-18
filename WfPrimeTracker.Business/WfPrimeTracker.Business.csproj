@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.0.0" />
+    <PackageReference Include="Hangfire.Console" Version="1.4.2" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.2" />
   </ItemGroup>
 
@@ -14,6 +15,15 @@
     <ProjectReference Include="..\WfPrimeTracker.Data\WfPrimeTracker.Data.csproj" />
     <ProjectReference Include="..\WfPrimeTracker.Domain\WfPrimeTracker.Domain.csproj" />
     <ProjectReference Include="..\WfPrimeTracker.Dtos\WfPrimeTracker.Dtos.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Hangfire.Core">
+      <HintPath>..\..\..\Users\DiVa\.nuget\packages\hangfire.core\1.7.0\lib\netstandard2.0\Hangfire.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <HintPath>System</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

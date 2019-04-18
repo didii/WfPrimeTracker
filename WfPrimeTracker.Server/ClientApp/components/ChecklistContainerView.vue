@@ -1,5 +1,5 @@
 <template>
-    <div data-component="checklistcontainerview">
+    <div data-component="checklistcontainerview" :class="{'check-container': true, checked: isChecked}">
         <div class="item-container">
             <div class="row">
                 <RelicCollapseButton
@@ -7,7 +7,7 @@
                     @click.native="isAllCollapsed = !isAllCollapsed"
                     class="col-auto px-2 py-0"
                 />
-                <div :class="`col check-container ${isChecked ? 'checked' : ''}`">
+                <div class="col">
                     <label class="font-weight-bold m-0 p-2 w-100">
                         <input
                             type="checkbox"
@@ -15,10 +15,7 @@
                             class="checkbox"
                         />
                         {{ primeItem.name }}
-                        <a
-                            :href="wikiUrl"
-                            target="_blank"
-                        >
+                        <a :href="wikiUrl" target="_blank">
                             <i class="fas fa-external-link-alt"></i>
                         </a>
                     </label>
@@ -81,15 +78,15 @@ export default class ChecklistContainerView extends Vue {
     border-top-color: gray;
 }
 .item-container {
-    .check-container {
-        @extend %gradient-base;
-        &.checked {
-            @extend %gradient-checked;
-        }
-    }
     .fas.fa-external-link-alt {
         margin-left: 4px;
         font-size: 14px;
+    }
+}
+.check-container {
+    @extend %gradient-base;
+    &.checked {
+        @extend %gradient-checked;
     }
 }
 </style>

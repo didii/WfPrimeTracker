@@ -1,5 +1,6 @@
 ﻿using System;
 using Hangfire;
+using Hangfire.Console;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,10 @@ namespace WfPrimeTracker.Server {
             services.AddMvc()
                     .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddHangfire(conf => conf.UseSqlServerStorage(Configuration.GetConnectionString("Default")));
+            services.AddHangfire(conf => {
+                conf.UseSqlServerStorage(Configuration.GetConnectionString("Default"));
+                conf.UseConsole();
+            });
 
             services.AddBusinessServices(Configuration);
         }
@@ -48,7 +52,7 @@ namespace WfPrimeTracker.Server {
                                      });
             app.UseHangfireServer();
 
-            RecurringJob.AddOrUpdate<IScraperJob>(job => job.Invoke(), Cron.Daily(4, 0));
+            RecurringJob.AddOrUpdate<IScraperJob>(job => job.Invoke(null), Cron.Daily(4, 0));
 
             app.UseMvc(routes => {
                 routes.MapRoute(

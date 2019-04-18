@@ -61,6 +61,7 @@ export default class PrimeSubPartView extends Vue {
 @import "../vars";
 
 .prime-sub-part {
+    margin-bottom: 0;
     @extend %gradient-base;
     &.checked {
         @extend %gradient-checked;

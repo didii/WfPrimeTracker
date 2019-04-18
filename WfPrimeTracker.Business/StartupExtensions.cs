@@ -17,9 +17,16 @@ namespace WfPrimeTracker.Business {
             services.AddTransient<IIdProvider, IdProvider>();
             services.AddTransient<IPrimeItemScraper, PrimeItemScraper>();
             services.AddTransient<IVoidRelicByRewardScraper, VoidRelicByRewardsScraper>();
+            services.AddTransient<IHtmlDocumentFetcher, HtmlDocumentFetcher>();
+            services.AddTransient<IDataPersister, DataPersister>();
+            services.AddTransient<IElementFinder, ElementFinder>();
+            services.AddTransient<IElementParser, ElementParser>();
+            services.AddTransient<IFieldUpdater, FieldUpdater>();
 
             // Services
             services.AddTransient<IPrimeItemService, PrimeItemService>();
+            services.AddTransient<IResourceService, ResourceService>();
+            services.AddTransient<IPrimePartService, PrimePartService>();
 
             // Automapper
             services.AddSingleton(new MapperConfiguration(conf => conf.AddProfile(typeof(MapperProfile))).CreateMapper());

@@ -8,6 +8,7 @@
             :key="ingredientsGroup.id"
             class="ingredients row"
         >
+            <div v-if="ingredientsGroup.name" class="col-12 border-bottom text-center text-muted">{{ingredientsGroup.name}}</div>
             <IngredientView
                 v-for="resourceIngredient in ingredientsGroup.resourceIngredients"
                 :key="resourceIngredient.resource.id"

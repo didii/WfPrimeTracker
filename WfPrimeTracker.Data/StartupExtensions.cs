@@ -24,7 +24,6 @@ namespace WfPrimeTracker.Data {
                 options.UseSqlServer(connectionString);
                 options.EnableSensitiveDataLogging();
             });
-            services.AddDbContext<InMemoryPrimeContext>(options => options.UseInMemoryDatabase("primeContext"));
         }
     }
 }

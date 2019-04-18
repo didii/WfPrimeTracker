@@ -32,6 +32,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WfPrimeTracker.Infrastructu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WfPrimeTracker.Domain", "WfPrimeTracker.Domain\WfPrimeTracker.Domain.csproj", "{306FC38F-52EC-47B1-99D5-CDC028143589}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "99 Tests", "99 Tests", "{6D8E7CFD-AA07-41E8-AE3F-A1793077AFE7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WfPrimeTracker.Business.Tests", "WfPrimeTracker.Business.Tests\WfPrimeTracker.Business.Tests.csproj", "{99A59536-7C8A-446C-B3A4-396B4678044E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +66,10 @@ Global
 		{306FC38F-52EC-47B1-99D5-CDC028143589}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{306FC38F-52EC-47B1-99D5-CDC028143589}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{306FC38F-52EC-47B1-99D5-CDC028143589}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99A59536-7C8A-446C-B3A4-396B4678044E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99A59536-7C8A-446C-B3A4-396B4678044E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99A59536-7C8A-446C-B3A4-396B4678044E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99A59536-7C8A-446C-B3A4-396B4678044E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +81,7 @@ Global
 		{BE04C943-53F7-449A-8ABC-A72F7E2E66F1} = {92CFFDC4-33D3-44B7-8322-324683D2612F}
 		{35E939B8-DB61-4B97-A81E-C8B029BEA5BE} = {A4515462-A786-45F3-A0C7-F9A7B245CF7E}
 		{306FC38F-52EC-47B1-99D5-CDC028143589} = {EBA20274-920C-41BF-B91C-4D9DE405A8D9}
+		{99A59536-7C8A-446C-B3A4-396B4678044E} = {6D8E7CFD-AA07-41E8-AE3F-A1793077AFE7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6306B7A3-976F-4CDF-A6D4-97953F747B85}

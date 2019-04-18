@@ -15,13 +15,13 @@ namespace WfPrimeTracker.Server.Controllers.V1 {
         }
 
         [HttpGet]
-        //[ResponseCache(Duration = 24*60*60, Location = ResponseCacheLocation.Any)] //= 1 day
+        [ResponseCache(Duration = 24*60*60, Location = ResponseCacheLocation.Any)] //= 1 day
         public async Task<IEnumerable<PrimeItemDto>> GetAll() {
             return await _service.GetAll();
         }
 
         [HttpGet("{id}/image")]
-        //[ResponseCache(Duration = 7*24*60*60, Location = ResponseCacheLocation.Any)] //= 1 week
+        [ResponseCache(Duration = 7*24*60*60, Location = ResponseCacheLocation.Any)] //= 1 week
         public async Task<IActionResult> GetImage(int id) {
             return File(await _service.GetImage(id), "image/png");
         }

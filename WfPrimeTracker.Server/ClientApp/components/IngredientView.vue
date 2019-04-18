@@ -2,7 +2,7 @@
     <div data-component="ingredientview" class="text-center" :title="resourceIngredient.resource.name">
         <div>
             <img
-                src="https://vignette.wikia.nocookie.net/warframe/images/b/b1/Credits64.png/revision/latest/scale-to-width-down/26?cb=20140515160015"
+                :src="imgUrl"
                 height="25"
             />
         </div>
@@ -17,6 +17,10 @@ import { ResourceIngredient } from '@/models/ResourceIngredient';
 @Component
 export default class IngredientView extends Vue {
     @Prop({ type: Object, required: true }) public resourceIngredient!: ResourceIngredient;
+
+    private get imgUrl(): string {
+        return `/api/resources/${this.resourceIngredient.resource.id}/image`;
+    }
 }
 </script>
 
