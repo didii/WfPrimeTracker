@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WfPrimeTracker.Business.Automapper;
@@ -29,10 +26,14 @@ namespace WfPrimeTracker.Business {
             services.AddTransient<IPrimePartService, PrimePartService>();
 
             // Automapper
-            services.AddSingleton(new MapperConfiguration(conf => conf.AddProfile(typeof(MapperProfile))).CreateMapper());
+            services.AddSingleton(
+                new MapperConfiguration(conf => conf.AddProfile(typeof(MapperProfile))).CreateMapper());
 
             // Hangfire jobs
-            services.AddTransient<IScraperJob, ScraperJob>();
+            services.AddTransient<IFullScraperJob, FullScraperJob>();
+            services.AddTransient<IRelicRewardsScraperJob, RelicRewardsScraperJob>();
+            services.AddTransient<IPrimeItemsScraperJob, PrimeItemsScraperJob>();
+            services.AddTransient<IBlueprintScraperJob, BlueprintScraperJob>();
 
             // Data services
             services.AddDataServices(configuration);

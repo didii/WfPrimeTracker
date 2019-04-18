@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using WfPrimeTracker.Business.Scrapers;
-using WfPrimeTracker.Data;
 using WfPrimeTracker.Data.Repositories;
 using WfPrimeTracker.Domain;
 using WfPrimeTracker.Dtos;
@@ -14,12 +10,11 @@ using WfPrimeTracker.Dtos;
 namespace WfPrimeTracker.Business.Services {
     internal class PrimeItemService : IPrimeItemService {
         private readonly IPersistentRepository<PrimeItem> _repo;
-        private readonly IPersistentRepository<Image> _imageRepo;
         private readonly IMapper _mapper;
 
-        public PrimeItemService(IPersistentRepository<PrimeItem> repo, IPersistentRepository<Image> imageRepo, IMapper mapper) {
+        public PrimeItemService(IPersistentRepository<PrimeItem> repo,
+                                IMapper mapper) {
             _repo = repo;
-            _imageRepo = imageRepo;
             _mapper = mapper;
         }
 
@@ -27,13 +22,13 @@ namespace WfPrimeTracker.Business.Services {
         public async Task<IEnumerable<PrimeItemDto>> GetAll() {
             var entity = await _repo.GetAll(query => query
                                                     .Include(item => item.PrimePartIngredients)
-                                                        .ThenInclude(i => i.PrimePart)
+                                                    .ThenInclude(i => i.PrimePart)
                                                     .Include(part => part.PrimePartIngredients)
-                                                        .ThenInclude(i => i.RelicDrops)
-                                                                .ThenInclude(drop => drop.Relic)
+                                                    .ThenInclude(i => i.RelicDrops)
+                                                    .ThenInclude(drop => drop.Relic)
                                                     .Include(item => item.IngredientsGroups)
-                                                        .ThenInclude(g => g.ResourceIngredients)
-                                                            .ThenInclude(i => i.Resource));
+                                                    .ThenInclude(g => g.ResourceIngredients)
+                                                    .ThenInclude(i => i.Resource));
             var result = _mapper.Map<IEnumerable<PrimeItemDto>>(entity);
             return result;
         }

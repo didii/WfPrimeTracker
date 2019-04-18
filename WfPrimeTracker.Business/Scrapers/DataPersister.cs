@@ -106,9 +106,6 @@ namespace WfPrimeTracker.Business.Scrapers {
 
         /// <inheritdoc />
         public async Task<PrimeItem> AddOrUpdatePrimeItem(PrimeItem primeItem, PrimeItemData itemData) {
-            // Keep track of prime part ingredients that have been found
-            var foundPrimePartIngredients = new Dictionary<string, PrimePartIngredient>();
-
             // Create a base group for Ingredients
             foreach (var ingredientGroupData in itemData.PartsData) {
                 // Create the ingredients group
@@ -132,35 +129,28 @@ namespace WfPrimeTracker.Business.Scrapers {
 
                 // Add all ingredients to it
                 foreach (var ingredientData in ingredientGroupData.Value) {
-                    // Try to find the part and set its count to 0 if new
-                    if (!foundPrimePartIngredients.TryGetValue(ingredientData.Name, out var foundPart)) {
-                        foundPart = primeItem.PrimePartIngredients.FirstOrDefault(
-                            x => x.PrimePart.Name.StartsWith(ingredientData.Name));
-                        if (foundPart != null) {
-                            foundPart.Count = 0;
-                            foundPrimePartIngredients.Add(ingredientData.Name, foundPart);
-                        }
-                    }
+                    // Get the image
+                    var data = await StreamToByteArray(ingredientData.Image);
+
                     // If part was found, update count and image
+                    var foundPart = primeItem.PrimePartIngredients.FirstOrDefault(x => x.PrimePart.Name.StartsWith(ingredientData.Name));
                     if (foundPart != null) {
-                        foundPart.Count += ingredientData.Count;
+                        foundPart.Count = ingredientData.Count;
                         // Add image
                         var partImage = await AddOrUpdatePeristentItem(
-                            new Image() {
-                                Data = await StreamToByteArray(ingredientData.Image),
-                            },
-                            (dest, source) => dest.Data = source.Data);
+                            new Image() { Data = data },
+                            (dest, source) => dest.Data = source.Data
+                        );
 
                         foundPart.PrimePart.ImageId = partImage.Id;
                         foundPart.PrimePart.Image = partImage;
-                        continue;
                     }
-                    // Otherwise we create or update a resource
+
+                    // It's also a resource, so create or update it also as a resource
                     var resourceImage = await AddOrUpdatePeristentItem(
-                        new Image() {
-                            Data = await StreamToByteArray(ingredientData.Image),
-                        },
-                        (dest, source) => dest.Data = source.Data);
+                        new Image() { Data = data },
+                        (dest, source) => dest.Data = source.Data
+                    );
 
                     var resource = await AddOrUpdatePeristentItem(
                         new Resource() {

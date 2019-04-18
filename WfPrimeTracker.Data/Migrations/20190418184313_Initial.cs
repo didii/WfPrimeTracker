@@ -202,9 +202,7 @@ namespace WfPrimeTracker.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_PrimeItems_ImageId",
                 table: "PrimeItems",
-                column: "ImageId",
-                unique: true,
-                filter: "[ImageId] IS NOT NULL");
+                column: "ImageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PrimePartIngredient_PrimeItemId",
@@ -219,9 +217,7 @@ namespace WfPrimeTracker.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_PrimeParts_ImageId",
                 table: "PrimeParts",
-                column: "ImageId",
-                unique: true,
-                filter: "[ImageId] IS NOT NULL");
+                column: "ImageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RelicDrop_PrimePartIngredientId",
@@ -231,9 +227,7 @@ namespace WfPrimeTracker.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Relics_ImageId",
                 table: "Relics",
-                column: "ImageId",
-                unique: true,
-                filter: "[ImageId] IS NOT NULL");
+                column: "ImageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ResourceIngredient_ResourceId",
@@ -243,9 +237,7 @@ namespace WfPrimeTracker.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Resources_ImageId",
                 table: "Resources",
-                column: "ImageId",
-                unique: true,
-                filter: "[ImageId] IS NOT NULL");
+                column: "ImageId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

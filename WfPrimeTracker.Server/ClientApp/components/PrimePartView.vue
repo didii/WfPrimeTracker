@@ -82,7 +82,7 @@ export default class PrimePartView extends Vue {
     }
 
     private get isBlueprint(): boolean {
-        return this.primePartIngredient.primePart.name == 'Blueprint';
+        return this.primePartIngredient.primePart.name == 'Blueprint' || this.primePartIngredient.primePart.name == 'Collar Blueprint';
     }
 
     private get isCollapsed(): boolean {

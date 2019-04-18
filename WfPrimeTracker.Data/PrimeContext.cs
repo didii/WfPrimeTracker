@@ -22,10 +22,10 @@ namespace WfPrimeTracker.Data {
             modelBuilder.Entity<ResourceIngredient>().HasKey(i => new { i.IngredientsGroupId, i.ResourceId });
 
             // One-to-one relations to Image
-            modelBuilder.Entity<Image>().HasOne(image => image.PrimeItem).WithOne(item => item.Image).OnDelete(DeleteBehavior.SetNull);
-            modelBuilder.Entity<Image>().HasOne(image => image.PrimePart).WithOne(part => part.Image).OnDelete(DeleteBehavior.SetNull);
-            modelBuilder.Entity<Image>().HasOne(image => image.Relic).WithOne(relic => relic.Image).OnDelete(DeleteBehavior.SetNull);
-            modelBuilder.Entity<Image>().HasOne(image => image.Resource).WithOne(resource => resource.Image).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Image>().HasMany(image => image.PrimeItem).WithOne(item => item.Image).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Image>().HasMany(image => image.PrimePart).WithOne(part => part.Image).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Image>().HasMany(image => image.Relic).WithOne(relic => relic.Image).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Image>().HasMany(image => image.Resource).WithOne(resource => resource.Image).OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<PrimeItem>().Property(i => i.Id).ValueGeneratedNever();
             modelBuilder.Entity<PrimePart>().Property(i => i.Id).ValueGeneratedNever();

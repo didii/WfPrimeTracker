@@ -1,10 +1,8 @@
-﻿using System;
-using Hangfire;
+﻿using Hangfire;
 using Hangfire.Console;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,7 +50,7 @@ namespace WfPrimeTracker.Server {
                                      });
             app.UseHangfireServer();
 
-            RecurringJob.AddOrUpdate<IScraperJob>(job => job.Invoke(null), Cron.Daily(4, 0));
+            RecurringJob.AddOrUpdate<IFullScraperJob>(job => job.Invoke(null), Cron.Daily(4, 0));
 
             app.UseMvc(routes => {
                 routes.MapRoute(

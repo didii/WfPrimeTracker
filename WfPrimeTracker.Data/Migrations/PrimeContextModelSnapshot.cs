@@ -57,9 +57,7 @@ namespace WfPrimeTracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ImageId")
-                        .IsUnique()
-                        .HasFilter("[ImageId] IS NOT NULL");
+                    b.HasIndex("ImageId");
 
                     b.ToTable("PrimeItems");
                 });
@@ -74,9 +72,7 @@ namespace WfPrimeTracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ImageId")
-                        .IsUnique()
-                        .HasFilter("[ImageId] IS NOT NULL");
+                    b.HasIndex("ImageId");
 
                     b.ToTable("PrimeParts");
                 });
@@ -116,9 +112,7 @@ namespace WfPrimeTracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ImageId")
-                        .IsUnique()
-                        .HasFilter("[ImageId] IS NOT NULL");
+                    b.HasIndex("ImageId");
 
                     b.ToTable("Relics");
                 });
@@ -148,9 +142,7 @@ namespace WfPrimeTracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ImageId")
-                        .IsUnique()
-                        .HasFilter("[ImageId] IS NOT NULL");
+                    b.HasIndex("ImageId");
 
                     b.ToTable("Resources");
                 });
@@ -181,16 +173,16 @@ namespace WfPrimeTracker.Data.Migrations
             modelBuilder.Entity("WfPrimeTracker.Domain.PrimeItem", b =>
                 {
                     b.HasOne("WfPrimeTracker.Domain.Image", "Image")
-                        .WithOne("PrimeItem")
-                        .HasForeignKey("WfPrimeTracker.Domain.PrimeItem", "ImageId")
+                        .WithMany("PrimeItem")
+                        .HasForeignKey("ImageId")
                         .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("WfPrimeTracker.Domain.PrimePart", b =>
                 {
                     b.HasOne("WfPrimeTracker.Domain.Image", "Image")
-                        .WithOne("PrimePart")
-                        .HasForeignKey("WfPrimeTracker.Domain.PrimePart", "ImageId")
+                        .WithMany("PrimePart")
+                        .HasForeignKey("ImageId")
                         .OnDelete(DeleteBehavior.SetNull);
                 });
 
@@ -210,8 +202,8 @@ namespace WfPrimeTracker.Data.Migrations
             modelBuilder.Entity("WfPrimeTracker.Domain.Relic", b =>
                 {
                     b.HasOne("WfPrimeTracker.Domain.Image", "Image")
-                        .WithOne("Relic")
-                        .HasForeignKey("WfPrimeTracker.Domain.Relic", "ImageId")
+                        .WithMany("Relic")
+                        .HasForeignKey("ImageId")
                         .OnDelete(DeleteBehavior.SetNull);
                 });
 
@@ -231,8 +223,8 @@ namespace WfPrimeTracker.Data.Migrations
             modelBuilder.Entity("WfPrimeTracker.Domain.Resource", b =>
                 {
                     b.HasOne("WfPrimeTracker.Domain.Image", "Image")
-                        .WithOne("Resource")
-                        .HasForeignKey("WfPrimeTracker.Domain.Resource", "ImageId")
+                        .WithMany("Resource")
+                        .HasForeignKey("ImageId")
                         .OnDelete(DeleteBehavior.SetNull);
                 });
 

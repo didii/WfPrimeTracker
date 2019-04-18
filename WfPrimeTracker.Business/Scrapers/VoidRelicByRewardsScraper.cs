@@ -210,8 +210,9 @@ namespace WfPrimeTracker.Business.Scrapers {
                         // Add image
                         var partImage = await AddOrUpdatePeristentItem(new Image() {
                             Data = await StreamToByteArray(ingredientData.Image),
-                            PrimePart = foundPart.PrimePart,
                         });
+                        foundPart.PrimePart.ImageId = partImage.Id;
+                        foundPart.PrimePart.Image = partImage;
                         continue;
                     }
                     // Otherwise we create or update a resource
@@ -241,8 +242,9 @@ namespace WfPrimeTracker.Business.Scrapers {
             // Add the image
             var image = await AddOrUpdatePeristentItem(new Image() {
                 Data = await StreamToByteArray(itemData.Image),
-                PrimeItem = primeItem,
             });
+            primeItem.ImageId = image.Id;
+            primeItem.Image = image;
         }
 
         private async Task<T> AddOrUpdateItem<T>(T item, Func<T, object[]> keysFunc) where T : class {

@@ -72,6 +72,16 @@ namespace WfPrimeTracker.Business.Scrapers {
                     continue;
                 }
 
+                // Check now if data already exists
+                // If it does, we don't bother getting the image again
+                if (data.PartsData.TryGetValue(currentKey, out var partDataList)) {
+                    var existing = partDataList.FirstOrDefault(p => p.Name == title);
+                    if (existing != null) {
+                        existing.Count += count;
+                        continue;
+                    }
+                }
+
                 // Get image
                 var img = a.SelectSingleNode(@"./img");
                 var src = img?.Attributes["data-src"]?.Value ?? img?.Attributes["src"]?.Value;
