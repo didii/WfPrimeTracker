@@ -33,6 +33,7 @@ namespace WfPrimeTracker.Business {
             services.AddTransient<IRelicRewardsScraperJob, RelicRewardsScraperJob>();
             services.AddTransient<IPrimeItemsScraperJob, PrimeItemsScraperJob>();
             services.AddTransient<IBlueprintScraperJob, BlueprintScraperJob>();
+            services.AddTransient<IResetDataJob, ResetDataJob>();
 
             // Data services
             services.AddDataServices(configuration);
