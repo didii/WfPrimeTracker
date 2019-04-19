@@ -38,10 +38,10 @@
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import { getModule } from 'vuex-module-decorators';
 import GlobalModule from '@/stores/GlobalModule';
+import { IPrimeItemSaveData } from '@/services/LoadService';
 import { PrimeItem } from '@/models/PrimeItem';
 import RelicCollapseButton from '@/components/utils/RelicCollapseButton.vue';
 import PrimePartContainerView from './PrimePartContainerView.vue';
-import { IPrimeItemSaveData } from '../../services/LoadService';
 
 @Component({
     components: {
