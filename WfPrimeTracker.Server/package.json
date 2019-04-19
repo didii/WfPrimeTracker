@@ -10,10 +10,10 @@
     ]
   },
   "scripts": {
-    "dev": "./node_modules/.bin/webpack --mode development --watch --config webpack.config.js",
-    "build:dev": "./node_modules/.bin/webpack --mode development --config webpack.config.js",
-    "build:prod": "./node_modules/.bin/webpack --mode production --config webpack.config.js",
-    "publish": "npm install && ./node_modules/.bin/webpack --mode production --config webpack.config.js && dotnet publish --configuration Release",
+    "dev": "./node_modules/.bin/webpack --mode=development --watch --config webpack.config.js",
+    "build:dev": "./node_modules/.bin/webpack --mode=development --config webpack.config.js",
+    "build:prod": "./node_modules/.bin/webpack --mode=production --config webpack.config.js",
+    "publish": "npm install && ./node_modules/.bin/webpack --mode=production --config webpack.config.js && dotnet publish --configuration Release",
     "test": "jest"
   },
   "dependencies": {
