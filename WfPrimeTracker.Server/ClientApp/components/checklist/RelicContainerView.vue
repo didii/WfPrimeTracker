@@ -31,7 +31,4 @@ export default class RelicContainerView extends Vue {
         border-left: 1px solid $light-border-color;
     }
 }
-.relics-container {
-    @extend %fade-in;
-}
 </style>

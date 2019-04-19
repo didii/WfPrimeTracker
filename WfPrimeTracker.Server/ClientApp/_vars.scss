@@ -10,24 +10,6 @@ $axi-img-url: "https://vignette.wikia.nocookie.net/warframe/images/0/0e/VoidProj
 $dark-border-color: gray;
 $light-border-color: #dee2e6;
 
-/* Fade-in animation */
-@keyframes fadeInOpacity {
-	0% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 1;
-	}
-}
-
-%fade-in {
-    opacity: 1;
-	animation-name: fadeInOpacity;
-	animation-iteration-count: 1;
-	animation-timing-function: ease-in;
-	animation-duration: 150ms;
-}
-
 /* Selected transition */
 %gradient-base {
     background-size: 200% 100%;
