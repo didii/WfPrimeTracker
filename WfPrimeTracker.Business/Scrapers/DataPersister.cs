@@ -125,6 +125,7 @@ namespace WfPrimeTracker.Business.Scrapers {
                             dest.PrimeItemId = source.PrimeItemId;
                             dest.PrimeItem = source.PrimeItem;
                         }
+                        if (dest.ResourceIngredients.Count > 0) dest.ResourceIngredients.Clear();
                     });
 
                 // Add all ingredients to it
