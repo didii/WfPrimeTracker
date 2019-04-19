@@ -12,7 +12,9 @@
                         <img
                             v-lazy="imgUrl"
                             width="30"
-                            :style="isBlueprint ? { transform: 'scale(0.7)' } : null"
+                            :style="
+                                isBlueprint ? { transform: 'scale(0.7)' } : null
+                            "
                         />
                     </div>
                     <div class="col prime-sub-part-container">
@@ -20,6 +22,7 @@
                             v-for="index in primePartIngredient.count"
                             :key="index"
                             :primePartIngredient="primePartIngredient"
+                            :saveData="saveData"
                             :index="index - 1"
                             :isParentChecked="isParentChecked"
                             class="prime-sub-part w-100"
@@ -38,6 +41,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
+import { IPrimePartSaveData, IPrimePartCheckedSaveData } from '@/services/LoadService';
 import { PrimePart } from '@/models/PrimePart';
 import { DropChance } from '@/models/DropChance.enum';
 import { PrimePartIngredient } from '@/models/PrimePartIngredient';
@@ -54,6 +58,7 @@ import RelicContainerView from './RelicContainerView.vue';
 })
 export default class PrimePartView extends Vue {
     @Prop({ type: Object, required: true }) public primePartIngredient!: PrimePartIngredient;
+    @Prop({ type: Object, required: true }) public saveData!: IPrimePartSaveData;
     @Prop({ type: Boolean, required: true }) public isParentChecked!: boolean;
 
     private get dropChance(): DropChance {
@@ -86,11 +91,11 @@ export default class PrimePartView extends Vue {
     }
 
     private get isCollapsed(): boolean {
-        return this.primePartIngredient.isCollapsed;
+        return this.saveData.isCollapsed;
     }
 
     private onToggleCollapse() {
-        this.primePartIngredient.isCollapsed = !this.primePartIngredient.isCollapsed;
+        this.saveData.isCollapsed = !this.saveData.isCollapsed;
     }
 }
 </script>

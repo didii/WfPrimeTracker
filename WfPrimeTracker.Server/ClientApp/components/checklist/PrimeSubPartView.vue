@@ -14,14 +14,21 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
+import { getModule } from 'vuex-module-decorators';
+import GlobalModule from '@/stores/GlobalModule';
+import { IPrimePartSaveData } from '@/services/LoadService';
 import { PrimePart } from '@/models/PrimePart';
 import { DropChance } from '@/models/DropChance.enum';
 import { PrimePartIngredient } from '@/models/PrimePartIngredient';
 
 @Component
 export default class PrimeSubPartView extends Vue {
+    private globalModule = getModule(GlobalModule);
+
     @Prop({ type: Object, required: true })
     private primePartIngredient!: PrimePartIngredient;
+    @Prop({type: Object, required: true})
+    public saveData!: IPrimePartSaveData;
     @Prop({ type: Number, required: true })
     private index!: number;
     @Prop({ type: Boolean, required: true })
@@ -49,10 +56,10 @@ export default class PrimeSubPartView extends Vue {
     }
 
     private get isChecked(): boolean {
-        return this.isParentChecked || this.primePartIngredient.isChecked[this.index];
+        return this.isParentChecked || this.saveData.isChecked[this.index];
     }
     private set isChecked(value: boolean) {
-        this.primePartIngredient.isChecked[this.index] = value;
+        this.saveData.isChecked[this.index] = value;
     }
 }
 </script>

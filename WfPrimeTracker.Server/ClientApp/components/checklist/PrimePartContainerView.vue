@@ -4,6 +4,7 @@
             v-for="primePartIngredient in primePartIngredients"
             :key="primePartIngredient.id"
             :primePartIngredient="primePartIngredient"
+            :saveData="primePartIngredientSaveData(primePartIngredient)"
             :isParentChecked="isParentChecked"
             class="prime-part"
         />
@@ -12,6 +13,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
+import { IPrimePartSaveData, IPrimePartsSaveData } from '@/services/LoadService';
 import { PrimePart } from '@/models/PrimePart';
 import { PrimePartIngredient } from '@/models/PrimePartIngredient';
 import PrimePartView from './PrimePartView.vue';
@@ -22,8 +24,13 @@ import PrimePartView from './PrimePartView.vue';
     }
 })
 export default class PrimePartContainerView extends Vue {
-    @Prop({ type: Array, required: true }) private primePartIngredients!: PrimePartIngredient[];
+    @Prop({ type: Array, required: true }) public primePartIngredients!: PrimePartIngredient[];
+    @Prop({ type: Object, required: true }) public saveData!: IPrimePartsSaveData; 
     @Prop({ type: Boolean, required: true }) public isParentChecked!: boolean;
+
+    private get primePartIngredientSaveData(): (primePartIngredient: PrimePartIngredient) => IPrimePartSaveData {
+        return ingredient => this.saveData[ingredient.id];
+    }
 }
 </script>
 

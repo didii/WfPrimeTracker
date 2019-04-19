@@ -6,7 +6,4 @@ export interface PrimePartIngredient {
     primePart: PrimePart;
     relicDrops: RelicDrop[];
     count: number;
-
-    isChecked: {[index: number]: boolean};
-    isCollapsed: boolean;
 }

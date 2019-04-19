@@ -1,5 +1,8 @@
 <template>
-    <div data-component="checklistcontainerview" :class="{'check-container': true, checked: isChecked}">
+    <div
+        data-component="checklistcontainerview"
+        :class="{ 'check-container': true, checked: isChecked }"
+    >
         <div class="item-container">
             <div class="row">
                 <RelicCollapseButton
@@ -25,6 +28,7 @@
         <hr class="separator" />
         <PrimePartContainerView
             :primePartIngredients="primeItem.primePartIngredients"
+            :saveData="saveData.primePartIngredients"
             :isParentChecked="isChecked"
         />
     </div>
@@ -37,6 +41,7 @@ import GlobalModule from '@/stores/GlobalModule';
 import { PrimeItem } from '@/models/PrimeItem';
 import RelicCollapseButton from '@/components/utils/RelicCollapseButton.vue';
 import PrimePartContainerView from './PrimePartContainerView.vue';
+import { IPrimeItemSaveData } from '../../services/LoadService';
 
 @Component({
     components: {
@@ -47,21 +52,26 @@ import PrimePartContainerView from './PrimePartContainerView.vue';
 export default class ChecklistContainerView extends Vue {
     private globalModule = getModule(GlobalModule, this.$store);
     @Prop({ type: Object, required: true }) private primeItem!: PrimeItem;
+    @Prop({ type: Object, required: true }) private saveData!: IPrimeItemSaveData;
 
     private get isAllCollapsed(): boolean {
-        return this.primeItem.primePartIngredients.every(p => p.isCollapsed);
+        for (const key in this.saveData.primePartIngredients) {
+            const partSaveData = this.saveData.primePartIngredients[key];
+            if (!partSaveData.isCollapsed) return false;
+        }
+        return true;
     }
     private set isAllCollapsed(value: boolean) {
-        this.primeItem.primePartIngredients.forEach(p => {
-            p.isCollapsed = value;
-        });
+        for (const key in this.saveData.primePartIngredients) {
+            this.saveData.primePartIngredients[key].isCollapsed = value;
+        }
     }
 
     private get isChecked(): boolean {
-        return this.primeItem.isChecked;
+        return this.saveData.isChecked;
     }
     private set isChecked(value: boolean) {
-        this.primeItem.isChecked = value;
+        this.saveData.isChecked = value;
     }
 
     private get wikiUrl(): string {

@@ -11,7 +11,7 @@ export default class GlobalModule extends VuexModule {
     }
 
     public get loadService(): LoadService {
-        return new LoadService(this.primeItemService);
+        return new LoadService();
     }
 
     public get wikiBaseUrl(): string {

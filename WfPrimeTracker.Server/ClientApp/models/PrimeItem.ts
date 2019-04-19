@@ -8,7 +8,4 @@ export interface PrimeItem {
     primePartIngredients: PrimePartIngredient[];
     credits: number;
     ingredientsGroups: IngredientsGroup[];
-
-    isChecked: boolean;
-    isCollapsed: boolean;
 }

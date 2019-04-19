@@ -8,7 +8,7 @@
                 :primeItem="primeItem"
                 class="info-container col-md-3 col-12"
             />
-            <ChecklistContainerView :primeItem="primeItem" class="col" />
+            <ChecklistContainerView :primeItem="primeItem" :saveData="saveData" class="col" />
         </div>
     </div>
 </template>
@@ -18,6 +18,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 import { PrimeItem } from '@/models/PrimeItem';
 import InfoContainerView from './info/InfoContainerView.vue';
 import ChecklistContainerView from './checklist/ChecklistContainerView.vue';
+import { IPrimeItemSaveData } from '@/services/LoadService';
 
 @Component({
     components: {
@@ -27,6 +28,7 @@ import ChecklistContainerView from './checklist/ChecklistContainerView.vue';
 })
 export default class PrimeItemView extends Vue {
     @Prop({ type: Object, required: true }) public primeItem!: PrimeItem;
+    @Prop({ type: Object, required: true }) public saveData!: IPrimeItemSaveData;
 }
 </script>
 
