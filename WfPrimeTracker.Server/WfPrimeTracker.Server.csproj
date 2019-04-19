@@ -61,10 +61,6 @@
   </Target>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\WfPrimeTracker.Business\WfPrimeTracker.Business.csproj" />
   </ItemGroup>
 
