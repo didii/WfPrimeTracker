@@ -35,8 +35,12 @@ export default class PrimeItemView extends Vue {
 
 <style lang="scss" scoped>
 .prime-item-view {
+    height: 100%;
     border: 2px solid gray;
     border-radius: 0.5rem;
+    > .row {
+        height: 100%;
+    }
     .collapse-container {
         position: absolute;
         margin: 3px;
