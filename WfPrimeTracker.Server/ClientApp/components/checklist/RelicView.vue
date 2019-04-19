@@ -78,7 +78,8 @@ export default class RelicView extends Vue {
         left: 0;
         height: 100%;
         width: 100%;
-        background-color: rgba(255, 255, 255, 0.40);
+        background-color: white;
+        opacity: 0.4;
         pointer-events: none;
     }
     span {
