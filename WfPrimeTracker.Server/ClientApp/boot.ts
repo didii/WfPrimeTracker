@@ -1,14 +1,12 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
+import Vue from 'vue';
 
 Vue.config.performance = true;
 
-Vue.use(VueRouter);
+import store from './store';
+import router from './router';
+import './modules';
 
-import store from "./store";
-import router from "./router";
-
-import App from "./App.vue";
+import App from './App.vue';
 
 new Vue({
     store,
