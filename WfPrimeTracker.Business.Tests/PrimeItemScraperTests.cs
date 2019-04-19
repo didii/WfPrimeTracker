@@ -27,6 +27,8 @@ namespace WfPrimeTracker.Business.Tests {
         [TestCase("/wiki/Ash/Prime")]
         [TestCase("/wiki/Akbolto_Prime")]
         [TestCase("/wiki/Akbronco_Prime")]
+        [TestCase("/wiki/Kavasa_Prime_Collar")]
+        [TestCase("/wiki/Odonata/Prime")]
         public async Task GetItemData(string url) {
             //Act
             var data = await _sut.GetData(url);
