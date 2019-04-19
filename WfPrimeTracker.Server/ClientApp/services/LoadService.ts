@@ -30,8 +30,8 @@ export interface ISaveData {
 export class LoadService {
     private saveKey: string = "saveData";
     private defaultPrimeItemCheckedValue: boolean = false;
-    private defaultPrimeItemShowIngredientsValue(options: IGlobalOptions): boolean {
-        return options.showIngredients;
+    private defaultPrimeItemShowIngredientsValue(saveData?: ISaveData | null): boolean {
+        return this.default(() => saveData!.globalOptions.showIngredients, false);
     };
     private defaultPrimePartCheckedValue: boolean = false;
     private defaultPrimePartCollapsedValue: boolean = true;
@@ -57,7 +57,7 @@ export class LoadService {
                 delete primeItem.isChecked;
             }
             // If show ingredients value is the default -> delete
-            if (primeItem.showIngredients === this.defaultPrimeItemShowIngredientsValue(toSave.globalOptions)) {
+            if (primeItem.showIngredients === this.defaultPrimeItemShowIngredientsValue(toSave)) {
                 delete primeItem.showIngredients;
             }
             // Loop through every part
@@ -108,7 +108,7 @@ export class LoadService {
         for (const primeItem of primeItems) {
             let primePartSave: IPrimeItemSaveData = {
                 isChecked: this.default(() => saveData!.primeItems[primeItem.id].isChecked, this.defaultPrimeItemCheckedValue),
-                showIngredients: this.default(() => saveData!.primeItems[primeItem.id].showIngredients, this.defaultPrimeItemShowIngredientsValue(saveData!.globalOptions)),
+                showIngredients: this.default(() => saveData!.primeItems[primeItem.id].showIngredients, this.defaultPrimeItemShowIngredientsValue(saveData!)),
                 primePartIngredients: {},
             };
             for (const primePartIngredient of primeItem.primePartIngredients) {
