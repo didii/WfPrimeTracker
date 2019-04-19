@@ -1,4 +1,5 @@
-﻿using Hangfire;
+﻿using System;
+using Hangfire;
 using Hangfire.Console;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -50,7 +51,10 @@ namespace WfPrimeTracker.Server {
                                      });
             app.UseHangfireServer();
 
+            // Set recurring job to sync data daily
             RecurringJob.AddOrUpdate<IFullScraperJob>(job => job.Invoke(null), Cron.Daily(4, 0));
+            // Add job as late as possible for a full reset when necessary
+            BackgroundJob.Schedule<IResetDataJob>(job => job.Invoke(null), DateTimeOffset.MaxValue);
 
             app.UseMvc(routes => {
                 routes.MapRoute(
