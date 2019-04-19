@@ -2,6 +2,7 @@
   "include": ["./ClientApp/**/*", "vue-shims.d.ts"],
   "compilerOptions": {
     "strict": true,
+    "strictNullChecks": true,
     "target": "es5",
     "sourceMap": true,
     "module": "esnext",
