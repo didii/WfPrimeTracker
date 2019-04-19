@@ -28,11 +28,11 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Tracker</a>
+                    <a class="nav-link" href="/home">Tracker</a>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link" href="#">Relics</a>
-                </li>
+                </li> -->
             </ul>
             <div class="form-inline my-2 my-lg-0">
                 <div class="input-group">
@@ -46,8 +46,7 @@
                         class="form-control"
                         placeholder="Search..."
                         @input="onSearchQueryChange"
-                        aria-label="Username"
-                        aria-describedby="basic-addon1"
+                        aria-label="Search"
                     />
                 </div>
             </div>

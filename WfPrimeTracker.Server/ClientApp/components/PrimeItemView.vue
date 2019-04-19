@@ -6,6 +6,7 @@
             </div> -->
             <InfoContainerView
                 :primeItem="primeItem"
+                :saveData="saveData"
                 class="info-container col-md-3 col-12"
             />
             <ChecklistContainerView :primeItem="primeItem" :saveData="saveData" class="col" />

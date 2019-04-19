@@ -1,7 +1,11 @@
 <template>
     <div data-component="home">
         <div v-if="primeItems == null">Loading...</div>
-        <PrimeItemsContainerView v-else :primeItems="primeItems" :saveData="saveData" />
+        <PrimeItemsContainerView
+            v-else
+            :primeItems="primeItems"
+            :saveData="saveData"
+        />
     </div>
 </template>
 
@@ -23,6 +27,7 @@ export default class Home extends Vue {
 
     private primeItems: PrimeItem[] | null = null;
     private saveData: ISaveData | null = null;
+    private previousShowIngredients: boolean | null = null;
 
     public mounted() {
         this.loadData().catch(err => console.error(err));
@@ -33,9 +38,24 @@ export default class Home extends Vue {
         this.saveData = this.globalModule.loadService.load(this.primeItems);
     }
 
-    @Watch('saveData', {deep: true})
-    private onSaveDataChanged() {
-        this.globalModule.loadService.save(this.saveData!);
+    @Watch('saveData.globalOptions.showIngredients')
+    private onShowIngredientsChanged(show: boolean) {
+        if (this.previousShowIngredients == null || this.previousShowIngredients == show) {
+            console.log('Skipping: ' + this.previousShowIngredients + ' vs ' + show);
+            this.previousShowIngredients = show;
+            return;
+        }
+
+        console.log('Updating: ' + this.previousShowIngredients + ' vs ' + show);
+        for (const primeItemId in this.saveData!.primeItems) {
+            this.saveData!.primeItems[primeItemId].showIngredients = show;
+        }
+        this.previousShowIngredients = show;
+    }
+
+    @Watch('saveData', { deep: true })
+    private onSaveDataChanged(saveData: ISaveData) {
+        this.globalModule.loadService.save(saveData);
     }
 }
 </script>

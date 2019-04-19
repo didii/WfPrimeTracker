@@ -12,18 +12,27 @@ export interface IPrimePartsSaveData {
 }
 export interface IPrimeItemSaveData {
     isChecked: boolean;
+    showIngredients: boolean;
     primePartIngredients: IPrimePartsSaveData;
 }
 export interface IPrimeItemsSaveData {
     [id: number]: IPrimeItemSaveData;
 }
+export interface IGlobalOptions {
+    hideCompleted: boolean;
+    showIngredients: boolean;
+}
 export interface ISaveData {
+    globalOptions: IGlobalOptions;
     primeItems: IPrimeItemsSaveData;
 }
 
 export class LoadService {
     private saveKey: string = "saveData";
     private defaultPrimeItemCheckedValue: boolean = false;
+    private defaultPrimeItemShowIngredientsValue(options: IGlobalOptions): boolean {
+        return options.showIngredients;
+    };
     private defaultPrimePartCheckedValue: boolean = false;
     private defaultPrimePartCollapsedValue: boolean = true;
 
@@ -46,6 +55,10 @@ export class LoadService {
             // If checked value is the default -> delete the property
             if (primeItem.isChecked === this.defaultPrimeItemCheckedValue) {
                 delete primeItem.isChecked;
+            }
+            // If show ingredients value is the default -> delete
+            if (primeItem.showIngredients === this.defaultPrimeItemShowIngredientsValue(toSave.globalOptions)) {
+                delete primeItem.showIngredients;
             }
             // Loop through every part
             for (const primePartId in primeItem.primePartIngredients) {
@@ -86,30 +99,31 @@ export class LoadService {
 
     private ensureCorrectSaveData(primeItems: PrimeItem[], saveData?: ISaveData | null): ISaveData {
         const result: ISaveData = {
+            globalOptions: {
+                hideCompleted: this.default(() => saveData!.globalOptions.hideCompleted, false),
+                showIngredients: this.default(() => saveData!.globalOptions.showIngredients, false),
+            },
             primeItems: {},
         };
         for (const primeItem of primeItems) {
             let primePartSave: IPrimeItemSaveData = {
-                isChecked: this.default(() => saveData!.primeItems[primeItem.id].isChecked, false),
+                isChecked: this.default(() => saveData!.primeItems[primeItem.id].isChecked, this.defaultPrimeItemCheckedValue),
+                showIngredients: this.default(() => saveData!.primeItems[primeItem.id].showIngredients, this.defaultPrimeItemShowIngredientsValue(saveData!.globalOptions)),
                 primePartIngredients: {},
             };
             for (const primePartIngredient of primeItem.primePartIngredients) {
                 const isChecked: IPrimePartCheckedSaveData = {};
                 for (let i = 0; i < primePartIngredient.count; i++) {
                     isChecked[i] = this.default(
-                        () =>
-                            saveData!.primeItems[primeItem.id].primePartIngredients[primePartIngredient.id].isChecked[
-                                i
-                            ],
-                        false
+                        () => saveData!.primeItems[primeItem.id].primePartIngredients[primePartIngredient.id].isChecked[i],
+                        this.defaultPrimePartCheckedValue,
                     );
                 }
                 primePartSave.primePartIngredients[primePartIngredient.id] = {
                     isChecked: isChecked,
                     isCollapsed: this.default(
-                        () =>
-                            saveData!.primeItems[primeItem.id].primePartIngredients[primePartIngredient.id].isCollapsed,
-                        true
+                        () => saveData!.primeItems[primeItem.id].primePartIngredients[primePartIngredient.id].isCollapsed,
+                        this.defaultPrimePartCollapsedValue,
                     ),
                 };
             }

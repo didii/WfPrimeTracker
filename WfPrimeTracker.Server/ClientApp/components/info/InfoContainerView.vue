@@ -8,7 +8,7 @@
             />
             <button
                 class="btn btn-link hide-button"
-                @click="onToggleIngredients"
+                @click="showIngredients = !showIngredients"
             >
                 {{ showIngredients ? "Hide" : "Show" }} ingredients
             </button>
@@ -19,6 +19,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
+import { IPrimeItemSaveData } from '@/services/LoadService';
 import { PrimeItem } from '@/models/PrimeItem';
 import IngredientsContainerView from './IngredientsContainerView.vue';
 
@@ -29,15 +30,17 @@ import IngredientsContainerView from './IngredientsContainerView.vue';
 })
 export default class InfoContainerView extends Vue {
     @Prop({ type: Object, required: true }) public primeItem!: PrimeItem;
-
-    private showIngredients: boolean = false;
+    @Prop({ type: Object, required: true }) public saveData!: IPrimeItemSaveData;
 
     private get imageUrl(): string {
         return `/api/primeitems/${this.primeItem.id}/image`;
     }
 
-    private onToggleIngredients() {
-        this.showIngredients = !this.showIngredients;
+    private get showIngredients(): boolean {
+        return this.saveData.showIngredients;
+    }
+    private set showIngredients(value: boolean) {
+        this.saveData.showIngredients = value;
     }
 }
 </script>
