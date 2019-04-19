@@ -44,18 +44,25 @@ namespace WfPrimeTracker.Business.Scrapers {
         }
 
         private void AddPartData(PrimeItemData data, HtmlDocument doc) {
-            var cells = doc.DocumentNode.SelectNodes(@"//*[@id='mw-content-text']/table[@class='foundrytable']//td");
+            var cells = doc.DocumentNode.SelectNodes(@"//*[@id='mw-content-text']/table[@class='foundrytable']/tr/td");
             var currentKey = "";
             foreach (var cell in cells) {
-                var a = cell.SelectSingleNode(@"./a");
-                if (a == null) continue;
+                // Check if drop locations was found
+                if (cell.InnerText.Contains("Drop Locations")) {
+                    // End of the important stuff, skip the rest
+                    break;
+                }
 
                 // Check if next part is encountered
                 if (cell.Attributes["colspan"]?.Value == "6") {
                     // Set key if so
-                    currentKey = a.InnerText;
+                    currentKey = cell.InnerText.Trim();
                     continue;
                 }
+
+                // The table always has an anchor if there is an ingredient
+                var a = cell.SelectSingleNode(@"./a");
+                if (a == null) continue;
 
                 // Get name of part
                 var title = a.Attributes["title"]?.Value;
