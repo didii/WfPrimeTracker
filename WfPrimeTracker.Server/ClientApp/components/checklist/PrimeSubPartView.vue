@@ -6,7 +6,7 @@
         <input type="checkbox" v-model="isChecked" :disabled="isParentChecked" />
         {{ primePartIngredient.primePart.name }} {{ index > 0 ? index + 1 : "" }}
         <i
-            :class="`fas fa-${iconName}`"
+            :class="{fas: true, ['fa-' + iconName]: true, 'rarity-icon': true}"
             :title="dropChanceLabel"
         ></i>
     </label>
@@ -73,7 +73,7 @@ export default class PrimeSubPartView extends Vue {
     &.checked {
         @extend %gradient-checked;
     }
-    .fas {
+    .rarity-icon {
         &[title="Common"] {
             color: $common-color;
         }
