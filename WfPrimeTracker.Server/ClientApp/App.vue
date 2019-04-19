@@ -20,20 +20,5 @@ import NavMenu from '@/components/NavMenu.vue';
     }
 })
 export default class App extends Vue {
-    private module = getModule(GlobalModule, this.$store);
-    private items: PrimeItem[] | null = null;
-    
-    public mounted() {
-        this.loadData();
-    }
-
-    private async loadData() {
-        this.items = await this.module.loadService.load();
-    }
-
-    @Watch('items', {deep: true})
-    private saveData() {
-        this.module.loadService.save(this.items!);
-    }
 }
 </script>
