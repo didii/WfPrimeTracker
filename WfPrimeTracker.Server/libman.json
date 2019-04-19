@@ -8,7 +8,7 @@
         "css/all.min.css",
         "webfonts/fa-solid-900.ttf"
       ],
-      "destination": "wwwroot/lib/font-aweseme"
+      "destination": "wwwroot/lib/font-awesome"
     }
   ]
 }
