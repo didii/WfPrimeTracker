@@ -1,6 +1,9 @@
 <template>
-    <div data-component="home">
-        <div v-if="primeItems == null">Loading...</div>
+    <div data-component="home" class="container-fluid">
+        <div v-if="primeItems == null" class="loading-container">
+            <i class="fas fa-spinner loading-icon"></i>
+            Loading...
+        </div>
         <PrimeItemsContainerView
             v-else
             :primeItems="primeItems"
@@ -57,3 +60,22 @@ export default class Home extends Vue {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-container {
+    text-align: center;
+    padding: 1rem;
+    .loading-icon {
+        animation: spin 2s infinite linear;
+    }
+}
+</style>
