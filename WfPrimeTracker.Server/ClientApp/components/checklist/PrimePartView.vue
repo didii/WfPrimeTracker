@@ -34,6 +34,7 @@
                 v-if="!isCollapsed"
                 :relicDrops="primePartIngredient.relicDrops"
                 class="relics-container col-12 col-md-5 mt-1"
+                data-aos="fade"
             />
         </div>
     </div>

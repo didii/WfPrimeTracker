@@ -13,7 +13,7 @@
                 {{ showIngredients ? "Hide" : "Show" }} ingredients
             </button>
         </div>
-        <IngredientsContainerView v-if="showIngredients" :ingredientsGroups="primeItem.ingredientsGroups" />
+        <IngredientsContainerView v-if="showIngredients" :ingredientsGroups="primeItem.ingredientsGroups" data-aos="fade" />
     </div>
 </template>
 
