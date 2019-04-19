@@ -61,7 +61,7 @@ import GlobalModule from '@/stores/GlobalModule';
 
 @Component
 export default class NavMenu extends Vue {
-    private globalModule = getModule(GlobalModule);
+    private globalModule = getModule(GlobalModule, this.$store);
 
     private onSearchQueryChange(event: any) {
         this.globalModule.search(event.target.value);
