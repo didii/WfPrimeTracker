@@ -108,7 +108,10 @@ module.exports = (env, argv) => {
                 /* config.module.rule('css') */
                 {
                     test: /\.css$/,
-                    loader: 'css-loader',
+                    loader: [
+                        'vue-style-loader',
+                        'css-loader'
+                    ],
                 },
                 /* config.module.rule('images') */
                 {
