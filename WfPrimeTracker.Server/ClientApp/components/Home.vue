@@ -41,12 +41,10 @@ export default class Home extends Vue {
     @Watch('saveData.globalOptions.showIngredients')
     private onShowIngredientsChanged(show: boolean) {
         if (this.previousShowIngredients == null || this.previousShowIngredients == show) {
-            console.log('Skipping: ' + this.previousShowIngredients + ' vs ' + show);
             this.previousShowIngredients = show;
             return;
         }
 
-        console.log('Updating: ' + this.previousShowIngredients + ' vs ' + show);
         for (const primeItemId in this.saveData!.primeItems) {
             this.saveData!.primeItems[primeItemId].showIngredients = show;
         }
