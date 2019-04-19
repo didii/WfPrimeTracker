@@ -1,6 +1,6 @@
 <template>
-    <button class="btn">
-        <i :class="`fas fa-caret-right ${isCollapsed ? '' : 'caret-open'}`"></i>
+    <button :class="{ btn: true, 'caret-open': !isCollapsed }">
+        <i class="fas fa-caret-right icon"></i>
     </button>
 </template>
 
@@ -17,7 +17,9 @@ export default class RelicCollapseButton extends Vue {
 .fas {
     transition: transform 200ms ease;
 }
-.caret-open {
-    transform: rotate(45deg);
+.btn.caret-open {
+    .icon {
+        transform: rotate(45deg);
+    }
 }
 </style>
