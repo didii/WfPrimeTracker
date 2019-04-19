@@ -21,10 +21,12 @@ const extractSassPlugin = new ExtractTextPlugin({
 });
 
 var appEntryFiles = {
-    // Add boot.ts to entry files
-    ClientApp: path.resolve(__dirname, 'ClientApp/boot.ts'),
-    // Add main site.scss file
-    vendor: path.resolve(__dirname, 'ClientApp/site.scss'),
+    ClientApp: [
+        // Add boot.ts to entry files
+        path.resolve(__dirname, 'ClientApp/boot.ts'),
+        // Add main site.scss file
+        path.resolve(__dirname, 'ClientApp/site.scss')
+    ],
 };
 
 module.exports = function(env, argv) {
