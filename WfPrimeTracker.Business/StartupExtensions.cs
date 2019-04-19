@@ -13,7 +13,6 @@ namespace WfPrimeTracker.Business {
             // Scrapers or scraper helpers
             services.AddTransient<IIdProvider, IdProvider>();
             services.AddTransient<IPrimeItemScraper, PrimeItemScraper>();
-            services.AddTransient<IVoidRelicByRewardScraper, VoidRelicByRewardsScraper>();
             services.AddTransient<IHtmlDocumentFetcher, HtmlDocumentFetcher>();
             services.AddTransient<IDataPersister, DataPersister>();
             services.AddTransient<IElementFinder, ElementFinder>();
