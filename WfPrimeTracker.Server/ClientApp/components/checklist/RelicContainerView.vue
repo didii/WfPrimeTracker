@@ -10,8 +10,8 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import { RelicDrop } from '../models/RelicDrop';
-import RelicView from '@/components/RelicView.vue';
+import { RelicDrop } from '@/models/RelicDrop';
+import RelicView from './RelicView.vue';
 
 @Component({
     components: {
@@ -24,7 +24,7 @@ export default class RelicContainerView extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "../vars";
+@import "../../vars";
 
 @media (min-width: 768px) {
     .relics-container {

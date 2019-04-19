@@ -32,11 +32,11 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import { PrimeItem } from '@/models/PrimeItem';
-import PrimePartContainerView from './PrimePartContainerView.vue';
-import RelicCollapseButton from './utils/RelicCollapseButton.vue';
 import { getModule } from 'vuex-module-decorators';
-import GlobalModule from '../stores/GlobalModule';
+import GlobalModule from '@/stores/GlobalModule';
+import { PrimeItem } from '@/models/PrimeItem';
+import RelicCollapseButton from '@/components/utils/RelicCollapseButton.vue';
+import PrimePartContainerView from './PrimePartContainerView.vue';
 
 @Component({
     components: {
@@ -71,7 +71,7 @@ export default class ChecklistContainerView extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "../vars";
+@import "../../vars";
 
 .separator {
     margin: 0;

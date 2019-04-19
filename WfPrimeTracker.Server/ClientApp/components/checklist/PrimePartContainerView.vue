@@ -12,9 +12,9 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import { PrimePart } from '../models/PrimePart';
+import { PrimePart } from '@/models/PrimePart';
+import { PrimePartIngredient } from '@/models/PrimePartIngredient';
 import PrimePartView from './PrimePartView.vue';
-import { PrimePartIngredient } from '../models/PrimePartIngredient';
 
 @Component({
     components: {
@@ -28,7 +28,7 @@ export default class PrimePartContainerView extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "../vars";
+@import "../../vars";
 
 .parts-container > * {
     border-bottom: 1px solid $light-border-color;

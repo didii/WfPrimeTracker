@@ -16,8 +16,8 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import { PrimeItem } from '@/models/PrimeItem';
-import InfoContainerView from './InfoContainerView.vue';
-import ChecklistContainerView from './ChecklistContainerView.vue';
+import InfoContainerView from './info/InfoContainerView.vue';
+import ChecklistContainerView from './checklist/ChecklistContainerView.vue';
 
 @Component({
     components: {

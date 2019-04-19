@@ -2,7 +2,7 @@
     <div data-component="ingredientview" class="text-center" :title="resourceIngredient.resource.name">
         <div>
             <img
-                :src="imgUrl"
+                v-lazy="imgUrl"
                 height="25"
             />
         </div>

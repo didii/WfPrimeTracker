@@ -36,7 +36,7 @@ export default class IngredientsContainerView extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "../vars";
+@import "../../vars";
 
 .ingredients-container {
     position: relative;

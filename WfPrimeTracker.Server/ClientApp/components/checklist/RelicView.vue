@@ -12,9 +12,9 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import { RelicDrop } from '../models/RelicDrop';
-import { RelicTier } from '../models/RelicTier.enum';
-import { DropChance } from '../models/DropChance.enum';
+import { RelicDrop } from '@/models/RelicDrop';
+import { RelicTier } from '@/models/RelicTier.enum';
+import { DropChance } from '@/models/DropChance.enum';
 
 @Component
 export default class RelicView extends Vue {
@@ -52,7 +52,7 @@ export default class RelicView extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "../vars";
+@import "../../vars";
 
 .relic {
     position: relative;

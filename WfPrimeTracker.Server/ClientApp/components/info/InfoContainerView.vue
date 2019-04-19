@@ -2,7 +2,7 @@
     <div data-component="infocontainerview" class="info-container">
         <div class="image-container text-center border-bottom">
             <img
-                :src="imageUrl"
+                v-lazy="imageUrl"
                 alt=""
                 class="image"
             />
@@ -19,8 +19,8 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import IngredientsContainerView from './IngredientsContainerView.vue';
 import { PrimeItem } from '@/models/PrimeItem';
+import IngredientsContainerView from './IngredientsContainerView.vue';
 
 @Component({
     components: {

@@ -16,7 +16,7 @@
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import { PrimePart } from '@/models/PrimePart';
 import { DropChance } from '@/models/DropChance.enum';
-import { PrimePartIngredient } from '../models/PrimePartIngredient';
+import { PrimePartIngredient } from '@/models/PrimePartIngredient';
 
 @Component
 export default class PrimeSubPartView extends Vue {
@@ -58,7 +58,7 @@ export default class PrimeSubPartView extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "../vars";
+@import "../../vars";
 
 .prime-sub-part {
     margin-bottom: 0;

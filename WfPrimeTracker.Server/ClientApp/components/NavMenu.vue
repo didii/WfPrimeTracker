@@ -34,7 +34,7 @@
                     <a class="nav-link" href="#">Relics</a>
                 </li>
             </ul>
-            <form class="form-inline my-2 my-lg-0">
+            <div class="form-inline my-2 my-lg-0">
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon1">
@@ -50,7 +50,7 @@
                         aria-describedby="basic-addon1"
                     />
                 </div>
-            </form>
+            </div>
         </div>
     </nav>
 </template>

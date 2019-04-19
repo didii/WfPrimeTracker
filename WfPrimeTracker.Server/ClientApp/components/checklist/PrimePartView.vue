@@ -10,7 +10,7 @@
                 <div class="row m-0">
                     <div class="col-auto image-container">
                         <img
-                            :src="imgUrl"
+                            v-lazy="imgUrl"
                             width="30"
                             :style="isBlueprint ? { transform: 'scale(0.7)' } : null"
                         />
@@ -40,10 +40,10 @@
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import { PrimePart } from '@/models/PrimePart';
 import { DropChance } from '@/models/DropChance.enum';
-import RelicCollapseButton from './utils/RelicCollapseButton.vue';
+import { PrimePartIngredient } from '@/models/PrimePartIngredient';
+import RelicCollapseButton from '@/components/utils/RelicCollapseButton.vue';
 import PrimeSubPartView from './PrimeSubPartView.vue';
 import RelicContainerView from './RelicContainerView.vue';
-import { PrimePartIngredient } from '../models/PrimePartIngredient';
 
 @Component({
     components: {
@@ -106,6 +106,7 @@ export default class PrimePartView extends Vue {
         display: flex;
         flex-direction: column;
         .prime-sub-part {
+            padding-left: 4px;
             flex: 1 0;
         }
     }
