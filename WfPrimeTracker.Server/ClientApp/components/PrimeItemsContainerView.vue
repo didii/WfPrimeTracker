@@ -11,6 +11,7 @@
                 :key="primeItem.id"
                 :id="primeItem.id"
                 :class="['col-lg-6', 'col-12', 'p-2', isFiltered(primeItem) ? 'd-none' : '']"
+                data-aos="fade-in"
             >
                 <PrimeItemView
                     :primeItem="primeItem"
