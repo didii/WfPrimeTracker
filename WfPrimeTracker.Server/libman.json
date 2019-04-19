@@ -6,7 +6,7 @@
       "library": "font-awesome@5.8.1",
       "files": [
         "css/all.min.css",
-        "webfonts/fa-solid-900.ttf"
+        "webfonts/fa-solid-900.woff2"
       ],
       "destination": "wwwroot/lib/font-awesome"
     }
