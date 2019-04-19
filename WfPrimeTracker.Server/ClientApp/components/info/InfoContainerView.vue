@@ -54,8 +54,8 @@ export default class InfoContainerView extends Vue {
         }
         .hide-button {
             position: absolute;
-            bottom: 0;
-            right: 0;
+            bottom: 1px;
+            right: 1px;
             background-color: rgba(255, 255, 255, 0.85);
             font-size: 12px;
             padding: 0;
