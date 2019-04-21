@@ -22,24 +22,15 @@ namespace WfPrimeTracker.Business.Jobs {
             context.WriteLine("> Clearing data");
             var entityTypes = _context.Model.GetEntityTypes();
             var rows = await _context.Database.ExecuteSqlCommandAsync(@"
-DROP TABLE dbo.RelicDrop;
-GO;
-DROP TABLE dbo.ResourceIngredient;
-GO;
-DROP TABLE dbo.PrimePartIngredient;
-GO;
-DROP TABLE dbo.Relics;
-GO;
-DROP TABLE dbo.IngredientsGroup;
-GO;
-DROP TABLE dbo.Resources;
-GO;
-DROP TABLE dbo.PrimeParts;
-GO;
-DROP TABLE dbo.PrimeItems;
-GO;
-DROP TABLE dbo.Images;
-GO;"
+DELETE FROM dbo.RelicDrop;
+DELETE FROM dbo.ResourceIngredient;
+DELETE FROM dbo.PrimePartIngredient;
+DELETE FROM dbo.Relics;
+DELETE FROM dbo.IngredientsGroup;
+DELETE FROM dbo.Resources;
+DELETE FROM dbo.PrimeParts;
+DELETE FROM dbo.PrimeItems;
+DELETE FROM dbo.Images;"
             );
             context.WriteLine($"< Rows changed: {rows}");
 
