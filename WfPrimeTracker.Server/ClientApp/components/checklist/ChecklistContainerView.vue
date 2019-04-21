@@ -11,16 +11,21 @@
                     class="col-auto px-2 py-0"
                 />
                 <div class="col">
-                    <label class="font-weight-bold m-0 p-2 w-100">
-                        <input
-                            type="checkbox"
-                            v-model="isChecked"
-                            class="checkbox"
-                        />
-                        {{ primeItem.name }}
-                        <a :href="wikiUrl" target="_blank">
-                            <i class="fas fa-external-link-alt"></i>
-                        </a>
+                    <label class="row">
+                        <div class="font-weight-bold col">
+                            <input
+                                type="checkbox"
+                                v-model="isChecked"
+                                class="checkbox"
+                            />
+                            {{ primeItem.name }}
+                            <a :href="wikiUrl" target="_blank">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                        <div v-if="isVaulted" title="Vaulted" class="col-auto vaulted text-muted">
+                            V
+                        </div>
                     </label>
                 </div>
             </div>
@@ -77,6 +82,10 @@ export default class ChecklistContainerView extends Vue {
     private get wikiUrl(): string {
         return this.globalModule.wikiBaseUrl + this.primeItem.wikiUrl;
     }
+
+    private get isVaulted(): boolean {
+        return this.primeItem.primePartIngredients.every(i => i.relicDrops.every(d => d.relic.isVaulted));
+    }
 }
 </script>
 
@@ -88,6 +97,17 @@ export default class ChecklistContainerView extends Vue {
     border-top-color: gray;
 }
 .item-container {
+    label {
+        margin: 0;
+        > * {
+            padding: 0.5rem;
+        }
+        .vaulted {
+            font-size: 85%;
+            background-color: aliceblue;
+            border-top-right-radius: .35rem;
+        }
+    }
     .fas.fa-external-link-alt {
         margin-left: 4px;
         font-size: 14px;
