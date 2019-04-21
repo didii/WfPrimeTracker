@@ -17,7 +17,7 @@ namespace WfPrimeTracker.Server.Controllers.V1 {
         }
 
         [HttpGet("{id}/image")]
-        [ResponseCache(Duration = 7 * 24 * 60 * 60, Location = ResponseCacheLocation.Any)] //= 1 week
+        [ResponseCache(Duration = 2 * 60 * 60, Location = ResponseCacheLocation.Any)] //= 2 hours
         public async Task<IActionResult> GetImage(int id) {
             return File(await _service.GetImage(id), "image/png");
         }
