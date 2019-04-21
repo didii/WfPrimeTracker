@@ -7,21 +7,25 @@
             vaulted: isVaulted,
         }"
     >
-        <span>
+        <a :href="wikiUrl" target="_blank">
             {{ label }}
             <i :class="`fas fa-${iconName} rarity-icon`" :title="rarityLabel"></i>
-        </span>
+        </a>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
+import { getModule } from 'vuex-module-decorators';
+import GlobalModule from '@/stores/GlobalModule';
 import { RelicDrop } from '@/models/RelicDrop';
 import { RelicTier } from '@/models/RelicTier.enum';
 import { DropChance } from '@/models/DropChance.enum';
 
 @Component
 export default class RelicView extends Vue {
+    private globalModule = getModule(GlobalModule);
+
     @Prop({ type: Object, required: true }) public relicDrop!: RelicDrop;
 
     private get label(): string {
@@ -38,6 +42,10 @@ export default class RelicView extends Vue {
 
     private get isVaulted(): boolean {
         return this.relicDrop.relic.isVaulted;
+    }
+
+    private get wikiUrl(): string {
+        return this.globalModule.wikiBaseUrl + this.relicDrop.relic.wikiUrl;
     }
 
     private get iconName(): string {
@@ -86,7 +94,8 @@ export default class RelicView extends Vue {
         opacity: 0.4;
         pointer-events: none;
     }
-    span {
+    a {
+        color: black;
         margin-left: 30px;
     }
     .rarity-icon {
