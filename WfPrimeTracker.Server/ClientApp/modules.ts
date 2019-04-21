@@ -4,7 +4,9 @@ import '@fortawesome/fontawesome-free';
 import '@fortawesome/fontawesome-free/js/solid';
 import * as AOS from 'aos';
 import 'aos/dist/aos.css';
-AOS.init();
+AOS.init({
+    offset: 0,
+});
 
 // Vue modules
 import Vue from 'vue';
