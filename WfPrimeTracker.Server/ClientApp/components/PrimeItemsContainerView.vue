@@ -22,25 +22,28 @@
         <div v-else class="nothing">
             Nothing found!
         </div>
+        <ToTheTop class="to-the-top" />
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import { getModule } from 'vuex-module-decorators';
+import AOS from 'aos';
 import GlobalModule from '@/stores/GlobalModule';
 import { ISaveData, IPrimeItemSaveData } from '@/services/LoadService';
 import { PrimeItem } from '@/models/PrimeItem';
 import PrimeItemsOptions from './PrimeItemsOptions.vue';
 import SummaryView from './SummaryView.vue';
 import PrimeItemView from './PrimeItemView.vue';
-import AOS from 'aos';
+import ToTheTop from './ToTheTop.vue';
 
 @Component({
     components: {
         PrimeItemsOptions,
         SummaryView,
         PrimeItemView,
+        ToTheTop,
     }
 })
 export default class PrimeItemsContainerView extends Vue {
@@ -90,5 +93,10 @@ export default class PrimeItemsContainerView extends Vue {
 .nothing {
     text-align: center;
     padding: 1rem;
+}
+.to-the-top {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
 }
 </style>
