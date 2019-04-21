@@ -4,7 +4,7 @@
             <i class="fas fa-cog"></i>
         </button>
         <div v-else class="options-container">
-            <h6>Options</h6>
+            <h6 class="font-weight-bold">Options</h6>
             <div>
                 <label> <input type="checkbox" v-model="globalOptions.hideCompleted" /> Hide completed </label>
             </div>
