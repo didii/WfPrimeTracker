@@ -1,37 +1,50 @@
 <template>
     <div data-component="summaryview" class="summary-container border">
-        <span
+        <button
             v-for="primeItem in primeItems"
             :key="primeItem.id"
+            @click="() => onClick(primeItem)"
             :class="{
+                btn: true,
                 badge: true,
                 'badge-success': isCompleted(primeItem),
                 'badge-secondary': !isCompleted(primeItem)
             }"
         >
             {{ shortName(primeItem) }}
-        </span>
+        </button>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
+import { getModule } from 'vuex-module-decorators';
+import GlobalModule from '@/stores/GlobalModule';
 import { PrimeItem } from '@/models/PrimeItem';
 import { IPrimeItemsSaveData } from '@/services/LoadService';
 
 @Component
 export default class SummaryView extends Vue {
+    private globalModule = getModule(GlobalModule);
+
     @Prop({ type: Array, required: true }) public primeItems!: PrimeItem[];
     @Prop({ type: Object, required: true }) public saveData!: IPrimeItemsSaveData;
 
-    public get shortName(): (primeItem: PrimeItem) => string {
+    private get shortName(): (primeItem: PrimeItem) => string {
         return item => item.name.replace(/ Prime/, '');
     }
-    public get completedItems(): PrimeItem[] {
+    private get completedItems(): PrimeItem[] {
         return this.primeItems.filter(i => this.saveData[i.id].isChecked);
     }
-    public get isCompleted(): (primeItem: PrimeItem) => boolean {
+    private get isCompleted(): (primeItem: PrimeItem) => boolean {
         return item => this.saveData[item.id].isChecked;
+    }
+    private onClick(primeItem: PrimeItem) {
+        const element = document.getElementById('' + primeItem.id);
+        if (element != null) {
+            element.scrollIntoView({block: 'center'});
+        }
+        this.globalModule.highlight(primeItem.id);
     }
 }
 </script>
