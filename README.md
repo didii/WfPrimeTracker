@@ -23,9 +23,11 @@ It also helps in identifying newly added items (when a new Prime item comes out)
 
 ## TODO
 
-* Add Wiki url links to Relics
 * Sort options
-* Improve colors on drop chance icons
 * Look into different icons for drop chance icons
 * Hide pictures option
 * Save/copy option using probably a unique url linked to a specific user
+* ~~Add Wiki url links to Relics~~
+* ~~Improve colors on drop chance icons~~
+* ~~Animate on Scroll improvements~~
+* ~~Add an about page~~
