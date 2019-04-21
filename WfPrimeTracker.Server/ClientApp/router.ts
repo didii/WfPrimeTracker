@@ -7,7 +7,8 @@ Vue.use(VueRouter);
 
 const routes: RouteConfig[] = [
     { path: '/', redirect: '/home' },
-    { path: '/home', component: Home }
+    { path: '/home', component: Home },
+    { path: '*', redirect: '/home' },
 ];
 
 export default new VueRouter({ mode: 'history', routes: routes });
