@@ -1,11 +1,15 @@
 <template>
     <div
         data-component="relicview"
-        :class="`relic ${tierClass} ${isVaulted ? 'vaulted' : ''}`"
+        :class="{
+            relic: true,
+            [tierClass]: true,
+            vaulted: isVaulted,
+        }"
     >
         <span>
             {{ label }}
-            <i :class="`fas fa-${iconName}`" :title="rarityLabel"></i>
+            <i :class="`fas fa-${iconName} rarity-icon`" :title="rarityLabel"></i>
         </span>
     </div>
 </template>
@@ -85,7 +89,7 @@ export default class RelicView extends Vue {
     span {
         margin-left: 30px;
     }
-    .fas {
+    .rarity-icon {
         &[title="Common"] {
             color: $common-color;
         }
