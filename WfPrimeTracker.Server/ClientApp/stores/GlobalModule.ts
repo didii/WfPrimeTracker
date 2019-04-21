@@ -5,6 +5,7 @@ import { LoadService } from '@/services/LoadService';
 @Module({ name: 'GlobalModule' })
 export default class GlobalModule extends VuexModule {
     private _searchQuery: string = '';
+    private _highlightId: number = 0;
 
     public get primeItemService(): PrimeItemService {
         return new PrimeItemService();
@@ -22,7 +23,15 @@ export default class GlobalModule extends VuexModule {
         return this._searchQuery;
     }
 
+    public get highlightId(): number {
+        return this._highlightId;
+    }
+
     @Mutation public search(query: string) {
         this._searchQuery = query;
+    }
+
+    @Mutation public highlight(primeItemId: number) {
+        this._highlightId = primeItemId;
     }
 }
