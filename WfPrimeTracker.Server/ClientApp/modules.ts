@@ -2,6 +2,7 @@
 import 'bootstrap';
 import '@fortawesome/fontawesome-free';
 import '@fortawesome/fontawesome-free/js/solid';
+import '@fortawesome/fontawesome-free/js/brands';
 import * as AOS from 'aos';
 import 'aos/dist/aos.css';
 AOS.init({
