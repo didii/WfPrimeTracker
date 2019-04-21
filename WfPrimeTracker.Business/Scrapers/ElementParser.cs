@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Web;
 using HtmlAgilityPack;
 using WfPrimeTracker.Domain;
 
@@ -59,12 +60,12 @@ namespace WfPrimeTracker.Business.Scrapers {
         private void ParseItemCell(HtmlNode cell, RowData data) {
             var a = cell.ChildNodes.First(c => c.Name == "a");
             var href = a.Attributes.First(attr => attr.Name == "href");
-            data.ItemName = a.InnerText;
+            data.ItemName = HttpUtility.HtmlDecode(a.InnerText);
             data.ItemUrl = href.Value;
         }
 
         private void ParsePartCell(HtmlNode cell, RowData data) {
-            data.PartName = cell.InnerText;
+            data.PartName = HttpUtility.HtmlDecode(cell.InnerText);
         }
 
         private void ParseRelicTierCell(HtmlNode cell, RowData data) {
@@ -76,7 +77,7 @@ namespace WfPrimeTracker.Business.Scrapers {
         private void ParseRelicNameCell(HtmlNode cell, RowData data) {
             var a = cell.SelectSingleNode(".//a");
             var href = a.Attributes.First(attr => attr.Name == "href");
-            data.RelicName = a.InnerText;
+            data.RelicName = HttpUtility.HtmlDecode(a.InnerText);
             data.RelicUrl = href.Value;
         }
 

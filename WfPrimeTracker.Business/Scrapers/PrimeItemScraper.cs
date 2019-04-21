@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using HtmlAgilityPack;
 
 namespace WfPrimeTracker.Business.Scrapers {
@@ -67,6 +68,7 @@ namespace WfPrimeTracker.Business.Scrapers {
                 // Get name of part
                 var title = a.Attributes["title"]?.Value;
                 if (string.IsNullOrEmpty(title)) continue;
+                title = HttpUtility.HtmlDecode(title);
 
                 // Get count
                 var innerText = cell.InnerText.Replace(",", "").Trim();
