@@ -1,5 +1,5 @@
 <template>
-    <div data-component="primeitemview" class="prime-item-view">
+    <div data-component="primeitemview" :class="{'prime-item-view': true, 'highlight': highlight}">
         <div class="row">
             <!-- <div class="collapse-container">
                 <i class="fas fa-angle-down"></i>
@@ -15,11 +15,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
+import { getModule } from 'vuex-module-decorators';
+import GlobalModule from '@/stores/GlobalModule';
+import { IPrimeItemSaveData } from '@/services/LoadService';
 import { PrimeItem } from '@/models/PrimeItem';
 import InfoContainerView from './info/InfoContainerView.vue';
 import ChecklistContainerView from './checklist/ChecklistContainerView.vue';
-import { IPrimeItemSaveData } from '@/services/LoadService';
+import { setTimeout } from 'timers';
 
 @Component({
     components: {
@@ -28,8 +31,20 @@ import { IPrimeItemSaveData } from '@/services/LoadService';
     }
 })
 export default class PrimeItemView extends Vue {
+    private globalModule = getModule(GlobalModule);
+    private highlight: boolean = false;
+
     @Prop({ type: Object, required: true }) public primeItem!: PrimeItem;
     @Prop({ type: Object, required: true }) public saveData!: IPrimeItemSaveData;
+
+
+    @Watch('globalModule.highlightId')
+    private onHighlightIdChanged(highlightId: number) {
+        if (this.primeItem.id === highlightId) {
+            this.highlight = true;
+            setTimeout(() => this.highlight = false, 100);
+        }
+    }
 }
 </script>
 
@@ -38,6 +53,11 @@ export default class PrimeItemView extends Vue {
     height: 100%;
     border: 2px solid gray;
     border-radius: 0.5rem;
+    transition: background-color 1s linear;
+    &.highlight {
+        background-color: burlywood;
+        transition: none;
+    }
     > .row {
         height: 100%;
     }
