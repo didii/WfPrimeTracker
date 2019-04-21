@@ -3,7 +3,7 @@
         data-component="navmenu"
         class="navbar sticky-top navbar-expand-md navbar-dark bg-dark"
     >
-        <a class="navbar-brand" href="#">
+        <router-link class="navbar-brand" to="/home">
             <img
                 src="https://i.imgur.com/PQPrX2s.png"
                 width="30"
@@ -12,7 +12,7 @@
                 alt=""
             />
             Prime Tracker
-        </a>
+        </router-link>
         <button
             class="navbar-toggler"
             type="button"
@@ -27,12 +27,12 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/home">Tracker</a>
+                <li class="nav-item">
+                    <router-link class="nav-link" to="/home">Tracker</router-link>
                 </li>
-                <!-- <li class="nav-item">
-                    <a class="nav-link" href="#">Relics</a>
-                </li> -->
+                <li class="nav-item">
+                    <router-link class="nav-link" to="/about">About</router-link>
+                </li>
             </ul>
             <div class="form-inline my-2 my-lg-0">
                 <div class="input-group">
@@ -68,3 +68,9 @@ export default class NavMenu extends Vue {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+.router-link-active {
+    color: white !important;
+}
+</style>
