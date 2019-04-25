@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hangfire.Console;
@@ -59,7 +60,28 @@ namespace WfPrimeTracker.Business.Jobs {
             context.WriteLine($"< Parsed all rows and found {primeItemsCount} prime items");
 
             context.WriteLine($"> Saving data");
-            var rowsChanged = await _context.SaveChangesAsync();
+            int rowsChanged = 0;
+            int retriesLeft = 3;
+            var errors = new List<Exception>(retriesLeft);
+            while (retriesLeft > 0) {
+                try {
+                    rowsChanged = await _context.SaveChangesAsync();
+                }
+                catch (Exception ex) {
+                    retriesLeft--;
+                    errors.Add(ex);
+                    context.SetTextColor(ConsoleTextColor.Red);
+                    context.WriteLine("An error occured while trying to save");
+                    context.WriteLine(ex);
+                    context.WriteLine("Retries left: " + retriesLeft);
+                    context.ResetTextColor();
+                    continue;
+                }
+                break;
+            }
+            if (retriesLeft == 0) {
+                throw new AggregateException(errors);
+            }
             context.WriteLine($"< Data saved: {rowsChanged} rows changed");
         }
     }
