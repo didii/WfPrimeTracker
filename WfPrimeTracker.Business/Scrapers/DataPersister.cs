@@ -4,10 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using WfPrimeTracker.Data;
 using WfPrimeTracker.Domain;
 
 namespace WfPrimeTracker.Business.Scrapers {
+    delegate void UpdateFunc<T>(T destination, T source, EntityEntry<T> entry) where T : class;
+
     class DataPersister : IDataPersister {
         private readonly PrimeContext _context;
         private readonly IIdProvider _idProvider;
@@ -27,7 +30,7 @@ namespace WfPrimeTracker.Business.Scrapers {
                     Name = rowData.ItemName,
                     WikiUrl = rowData.ItemUrl,
                 },
-                (dest, source) => {
+                (dest, source, _) => {
                     if (dest.Name != source.Name) dest.Name = source.Name;
                     if (dest.WikiUrl != source.WikiUrl) dest.WikiUrl = source.WikiUrl;
                 }
@@ -38,7 +41,7 @@ namespace WfPrimeTracker.Business.Scrapers {
                 new PrimePart() {
                     Name = rowData.PartName,
                 },
-                (dest, source) => {
+                (dest, source, _) => {
                     if (dest.Name != source.Name) dest.Name = source.Name;
                 });
 
@@ -50,7 +53,7 @@ namespace WfPrimeTracker.Business.Scrapers {
                     WikiUrl = rowData.RelicUrl,
                     IsVaulted = rowData.IsVaulted.Value,
                 },
-                (dest, source) => {
+                (dest, source, _) => {
                     if (dest.Tier != source.Tier) dest.Tier = source.Tier;
                     if (dest.Name != source.Name) dest.Name = source.Name;
                     if (dest.WikiUrl != source.WikiUrl) dest.WikiUrl = source.WikiUrl;
@@ -66,7 +69,7 @@ namespace WfPrimeTracker.Business.Scrapers {
                     PrimePart = primePart,
                     Count = 1 // Placeholder value
                 },
-                (dest, source) => {
+                (dest, source, entry) => {
                     if (dest.PrimeItemId != source.PrimeItemId) {
                         dest.PrimeItemId = source.PrimeItemId;
                         dest.PrimeItem = source.PrimeItem;
@@ -75,7 +78,12 @@ namespace WfPrimeTracker.Business.Scrapers {
                         dest.PrimePartId = source.PrimePartId;
                         dest.PrimePart = source.PrimePart;
                     }
-                    if (dest.Count != source.Count) dest.Count = source.Count;
+                    // Only update the count if it is 0 -> count cannot be known in this call
+                    if (dest.Count == 0) {
+                        dest.Count = source.Count;
+                    } else {
+                        entry.Property(i => i.Count).IsModified = false;
+                    }
                 });
 
             // Link prime part with relic
@@ -88,7 +96,7 @@ namespace WfPrimeTracker.Business.Scrapers {
                     DropChance = rowData.DropChance.Value,
                 },
                 r => new object[] { r.RelicId, r.PrimePartIngredientId },
-                (dest, source) => {
+                (dest, source, _) => {
                     if (dest.RelicId != source.RelicId) {
                         dest.RelicId = source.RelicId;
                         dest.Relic = source.Relic;
@@ -119,12 +127,13 @@ namespace WfPrimeTracker.Business.Scrapers {
                         PrimeItemId = primeItem.Id,
                         PrimeItem = primeItem,
                     },
-                    (dest, source) => {
+                    (dest, source, _) => {
                         if (dest.Name != source.Name) dest.Name = source.Name;
                         if (dest.PrimeItemId != source.PrimeItemId) {
                             dest.PrimeItemId = source.PrimeItemId;
                             dest.PrimeItem = source.PrimeItem;
                         }
+                        // Always completely clear the ingredients list
                         if (dest.ResourceIngredients.Count > 0) dest.ResourceIngredients.Clear();
                     });
 
@@ -140,7 +149,7 @@ namespace WfPrimeTracker.Business.Scrapers {
                         // Add image
                         var partImage = await AddOrUpdatePeristentItem(
                             new Image() { Data = data },
-                            (dest, source) => dest.Data = source.Data
+                            (dest, source, _) => dest.Data = source.Data
                         );
 
                         foundPart.PrimePart.ImageId = partImage.Id;
@@ -150,7 +159,7 @@ namespace WfPrimeTracker.Business.Scrapers {
                     // It's also a resource, so create or update it also as a resource
                     var resourceImage = await AddOrUpdatePeristentItem(
                         new Image() { Data = data },
-                        (dest, source) => dest.Data = source.Data
+                        (dest, source, _) => dest.Data = source.Data
                     );
 
                     var resource = await AddOrUpdatePeristentItem(
@@ -159,7 +168,7 @@ namespace WfPrimeTracker.Business.Scrapers {
                             ImageId = resourceImage.Id,
                             Image = resourceImage,
                         },
-                        (dest, source) => {
+                        (dest, source, _) => {
                             if (dest.Name != source.Name) dest.Name = source.Name;
                             if (dest.ImageId != source.ImageId) {
                                 dest.ImageId = source.ImageId;
@@ -176,7 +185,7 @@ namespace WfPrimeTracker.Business.Scrapers {
                             Count = ingredientData.Count,
                         },
                         i => new object[] { i.IngredientsGroupId, i.ResourceId },
-                        (dest, source) => {
+                        (dest, source, entry) => {
                             if (dest.ResourceId != source.ResourceId) {
                                 dest.ResourceId = source.ResourceId;
                                 dest.Resource = source.Resource;
@@ -196,7 +205,7 @@ namespace WfPrimeTracker.Business.Scrapers {
                 new Image() {
                     Data = await StreamToByteArray(itemData.Image),
                 },
-                (dest, source) => dest.Data = source.Data
+                (dest, source, _) => dest.Data = source.Data
             );
 
             primeItem.ImageId = image.Id;
@@ -207,10 +216,10 @@ namespace WfPrimeTracker.Business.Scrapers {
 
         /// <inheritdoc />
         public async Task<Image> AddOrUpdateImage(Image image) {
-            return await AddOrUpdatePeristentItem(image, (dest, source) => dest.Data = source.Data);
+            return await AddOrUpdatePeristentItem(image, (dest, source, _) => dest.Data = source.Data);
         }
 
-        private async Task<T> AddOrUpdateItem<T>(T item, Func<T, object[]> keysFunc, Action<T, T> updater)
+        private async Task<T> AddOrUpdateItem<T>(T item, Func<T, object[]> keysFunc, UpdateFunc<T> updater)
             where T : class {
             if (item == null) throw new ArgumentNullException(nameof(item));
             if (keysFunc == null) throw new ArgumentNullException(nameof(keysFunc));
@@ -223,14 +232,14 @@ namespace WfPrimeTracker.Business.Scrapers {
                 if (entry.State == EntityState.Added)
                     return foundItem;
                 entry.State = EntityState.Modified;
-                updater(foundItem, item);
+                updater(foundItem, item, entry);
                 return foundItem;
             }
             _context.Add(item);
             return item;
         }
 
-        private async Task<T> AddOrUpdatePeristentItem<T>(T item, Action<T, T> updater)
+        private async Task<T> AddOrUpdatePeristentItem<T>(T item, UpdateFunc<T> updater)
             where T : class, IPersistentItem {
             if (item == null) throw new ArgumentNullException(nameof(item));
             if (updater == null) throw new ArgumentNullException(nameof(updater));
@@ -242,7 +251,7 @@ namespace WfPrimeTracker.Business.Scrapers {
                 if (entry.State == EntityState.Added)
                     return foundItem;
                 entry.State = EntityState.Modified;
-                updater(foundItem, localItem);
+                updater(foundItem, localItem, entry);
                 return foundItem;
             }
             _context.Add(localItem);
