@@ -24,6 +24,8 @@ namespace WfPrimeTracker.Business.Jobs {
 
         /// <inheritdoc />
         public async Task Invoke(PerformContext context) {
+            List<Exception> errors = new List<Exception>();
+
             context.WriteLine($"> Fetch all prime items");
             var primeItems = await _context.Set<PrimeItem>()
                                            .Include(item => item.PrimePartIngredients)
@@ -42,8 +44,18 @@ namespace WfPrimeTracker.Business.Jobs {
             var progressBar = context.WriteProgressBar();
             var count = 0;
             foreach (var item in primeItems) {
-                var itemData = await _itemScraper.GetData(item.WikiUrl);
-                var toSave = await _persister.AddOrUpdatePrimeItem(item, itemData);
+                try {
+                    var itemData = await _itemScraper.GetData(item.WikiUrl);
+                    var toSave = await _persister.AddOrUpdatePrimeItem(item, itemData);
+                }
+                catch (Exception ex) {
+                    errors.Add(ex);
+                    context.SetTextColor(ConsoleTextColor.Red);
+                    context.WriteLine("Error occured when trying to parse " + item.Name);
+                    context.WriteLine(ex);
+                    context.WriteLine("");
+                    context.ResetTextColor();
+                }
                 count++;
                 progressBar.SetValue(100 * count / primeItemsCount);
             }
@@ -53,6 +65,11 @@ namespace WfPrimeTracker.Business.Jobs {
             context.WriteLine($"> Saving data");
             var rowsChanged = await _context.SaveChangesAsync();
             context.WriteLine($"< Data saved: {rowsChanged} rows changed");
+
+            if (errors.Count > 0) {
+                context.SetTextColor(ConsoleTextColor.Red);
+                throw new AggregateException(errors);
+            }
         }
     }
 }
