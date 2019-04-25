@@ -12,10 +12,14 @@ using HtmlAgilityPack;
 namespace WfPrimeTracker.Business.Scrapers {
     internal class PrimeItemScraper : IPrimeItemScraper {
         private const string BaseUrl = "https://warframe.fandom.com";
-
+        
         private static readonly HttpClient Client = new HttpClient();
 
         public async Task<PrimeItemData> GetData(string wikiUrl) {
+            // Ash Prime for some reason acts differently and gives a redirect to /wiki/Ash#Prime instead of loading the page /wiki/Ash/Prime
+            if (wikiUrl.Contains("Ash_Prime"))
+                wikiUrl = wikiUrl.Replace("Ash_Prime", "Ash/Prime");
+
             var web = new HtmlWeb();
             var doc = await web.LoadFromWebAsync($"{BaseUrl}{wikiUrl}");
 
@@ -30,8 +34,12 @@ namespace WfPrimeTracker.Business.Scrapers {
                 }
             } else {
                 // In case of kavasa prime collar
-                img = doc.DocumentNode.SelectSingleNode(@"//*[@id='mw-content-text']/div[1]/a/img");
-                src = img.Attributes["data-src"].Value;
+                var selected = doc.DocumentNode.SelectNodes(@"//*[@id='mw-content-text']/div/a[contains(@class, 'image-thumbnail')]/img");
+                img = doc.DocumentNode.SelectNodes(@"//*[@id='mw-content-text']/div/a[contains(@class, 'image-thumbnail')]/img").First();
+                src = img.Attributes["data-src"]?.Value ?? img.Attributes["src"]?.Value;
+            }
+            if (src == null) {
+                throw new ApplicationException("Could not find an appropriate image on " + wikiUrl);
             }
 
             var result = new PrimeItemData();
@@ -102,7 +110,7 @@ namespace WfPrimeTracker.Business.Scrapers {
                     try {
                         image = webClient.OpenRead(new Uri(src));
                     }
-                    catch (Exception e) {
+                    catch (Exception) {
                         continue;
                     }
                 }
