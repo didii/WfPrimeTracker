@@ -24,7 +24,7 @@ namespace WfPrimeTracker.Business.Tests {
             _persister = new DataPersister(_context, _idProvider, _updater);
         }
 
-        [TestCase("/wiki/Ash/Prime")]
+        [TestCase("/wiki/Ash_Prime")]
         [TestCase("/wiki/Akbolto_Prime")]
         [TestCase("/wiki/Akbronco_Prime")]
         [TestCase("/wiki/Kavasa_Prime_Collar")]
