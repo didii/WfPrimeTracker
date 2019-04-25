@@ -25,8 +25,10 @@ It also helps in identifying newly added items (when a new Prime item comes out)
 
 * Sort options
 * Look into different icons for drop chance icons
+* Look into better animation for checking an item
 * Hide pictures option
 * Save/copy option using probably a unique url linked to a specific user
+* Move Vaulted icon to the left
 * ~~Add Wiki url links to Relics~~
 * ~~Improve colors on drop chance icons~~
 * ~~Animate on Scroll improvements~~
