@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using WfPrimeTracker.Domain.Users;
 
 namespace WfPrimeTracker.Domain {
     public class PrimePart : IPersistentItem {
@@ -14,5 +15,7 @@ namespace WfPrimeTracker.Domain {
         public virtual Image Image { get; set; }
 
         public virtual ICollection<PrimePartIngredient> PrimePartIngredients { get; set; }
+
+        public virtual ICollection<UserPrimePartIngredientSaveData> UserPrimePartSaveDatas { get; set; }
     }
 }
