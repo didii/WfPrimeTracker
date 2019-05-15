@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WfPrimeTracker.Domain;
+using WfPrimeTracker.Domain.Users;
 
 namespace WfPrimeTracker.Data {
     public class PrimeContext : DbContext {
@@ -15,6 +16,8 @@ namespace WfPrimeTracker.Data {
 
         public DbSet<Image> Images { get; set; }
 
+        public DbSet<User> Users { get; set; }
+
         /// <inheritdoc />
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             // Entities with composite primary keys
@@ -27,6 +30,7 @@ namespace WfPrimeTracker.Data {
             modelBuilder.Entity<Image>().HasMany(image => image.Relic).WithOne(relic => relic.Image).OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<Image>().HasMany(image => image.Resource).WithOne(resource => resource.Image).OnDelete(DeleteBehavior.SetNull);
 
+            // Set the persistent item ID's to generate never so we can manually assign them
             modelBuilder.Entity<PrimeItem>().Property(i => i.Id).ValueGeneratedNever();
             modelBuilder.Entity<PrimePart>().Property(i => i.Id).ValueGeneratedNever();
             modelBuilder.Entity<PrimePartIngredient>().Property(i => i.Id).ValueGeneratedNever();
@@ -34,6 +38,10 @@ namespace WfPrimeTracker.Data {
             modelBuilder.Entity<IngredientsGroup>().Property(i => i.Id).ValueGeneratedNever();
             modelBuilder.Entity<Resource>().Property(i => i.Id).ValueGeneratedNever();
             modelBuilder.Entity<Image>().Property(i => i.Id).ValueGeneratedNever();
+
+            // Set User tables
+            modelBuilder.Entity<UserPrimeItemSaveData>().HasKey(d => new { d.UserId, d.PrimeItemId });
+            modelBuilder.Entity<UserPrimePartIngredientSaveData>().HasKey(d => new { d.UserId, d.PrimePartIngredientId });
         }
     }
 }
