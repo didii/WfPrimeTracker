@@ -23,6 +23,7 @@ namespace WfPrimeTracker.Business {
             services.AddTransient<IPrimeItemService, PrimeItemService>();
             services.AddTransient<IResourceService, ResourceService>();
             services.AddTransient<IPrimePartService, PrimePartService>();
+            services.AddTransient<IUserService, UserService>();
 
             // Automapper
             services.AddSingleton(
