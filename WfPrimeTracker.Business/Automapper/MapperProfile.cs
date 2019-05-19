@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using WfPrimeTracker.Domain;
+using WfPrimeTracker.Domain.Users;
 using WfPrimeTracker.Dtos;
+using WfPrimeTracker.Dtos.UserData;
 
 namespace WfPrimeTracker.Business.Automapper {
     internal class MapperProfile : Profile {
@@ -14,6 +16,8 @@ namespace WfPrimeTracker.Business.Automapper {
             CreateMap<RelicDrop, RelicDropDto>(MemberList.Destination);
             CreateMap<Resource, ResourceDto>(MemberList.Destination);
             CreateMap<ResourceIngredient, ResourceIngredientDto>(MemberList.Destination);
+
+            CreateMap<User, UserSaveDataDto>().ConvertUsing<User_UserSaveDataDto>();
         }
     }
 }
