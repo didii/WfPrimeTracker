@@ -1,18 +1,24 @@
 import { Module, VuexModule, Mutation } from 'vuex-module-decorators';
 import { PrimeItemService } from '@/services/PrimeItemService';
-import { LoadService } from '@/services/LoadService';
+import { LocalLoadService } from '@/services/LocalLoadService';
+import { SaveDataOptimizerService } from '@/services/SaveDataOptimizerService';
 
 @Module({ name: 'GlobalModule' })
 export default class GlobalModule extends VuexModule {
     private _searchQuery: string = '';
     private _highlightId: number = 0;
+    private _userId: string | null = null;
 
     public get primeItemService(): PrimeItemService {
         return new PrimeItemService();
     }
 
-    public get loadService(): LoadService {
-        return new LoadService();
+    public get saveDataOptimizer(): SaveDataOptimizerService {
+        return new SaveDataOptimizerService();
+    }
+
+    public get loadService(): LocalLoadService {
+        return new LocalLoadService(this.saveDataOptimizer);
     }
 
     public get wikiBaseUrl(): string {
@@ -27,11 +33,19 @@ export default class GlobalModule extends VuexModule {
         return this._highlightId;
     }
 
+    public get userId(): string | null {
+        return this._userId;
+    }
+
     @Mutation public search(query: string) {
         this._searchQuery = query;
     }
 
     @Mutation public highlight(primeItemId: number) {
         this._highlightId = primeItemId;
+    }
+
+    @Mutation public setUserId(userId: string | null) {
+        this._userId = userId;
     }
 }
