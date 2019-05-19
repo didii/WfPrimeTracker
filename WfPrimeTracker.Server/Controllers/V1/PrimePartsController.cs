@@ -7,9 +7,7 @@ using Microsoft.AspNetCore.Routing;
 using WfPrimeTracker.Business.Services;
 
 namespace WfPrimeTracker.Server.Controllers.V1 {
-    [Route("api/primeparts")]
-    [ApiController]
-    public class PrimePartsController : Controller {
+    public class PrimePartsController : ApiController {
         private readonly IPrimePartService _service;
 
         public PrimePartsController(IPrimePartService service) {

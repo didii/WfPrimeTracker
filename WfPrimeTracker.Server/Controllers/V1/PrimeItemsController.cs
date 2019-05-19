@@ -5,9 +5,7 @@ using WfPrimeTracker.Business.Services;
 using WfPrimeTracker.Dtos;
 
 namespace WfPrimeTracker.Server.Controllers.V1 {
-    [Route("/api/primeitems")]
-    [ApiController]
-    public class PrimeItemsController : Controller {
+    public class PrimeItemsController : ApiController {
         private readonly IPrimeItemService _service;
 
         public PrimeItemsController(IPrimeItemService service) {

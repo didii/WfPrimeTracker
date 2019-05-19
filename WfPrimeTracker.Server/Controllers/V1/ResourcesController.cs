@@ -6,9 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using WfPrimeTracker.Business.Services;
 
 namespace WfPrimeTracker.Server.Controllers.V1 {
-    [Route("api/resources")]
-    [ApiController]
-    public class ResourcesController : Controller {
+    public class ResourcesController : ApiController {
         private readonly IResourceService _service;
 
         public ResourcesController(IResourceService service) {
