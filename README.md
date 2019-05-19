@@ -23,11 +23,11 @@ It also helps in identifying newly added items (when a new Prime item comes out)
 
 ## TODO
 
+* Allow users to save data based on a unique GUID or OAuth
 * Sort options
 * Look into different icons for drop chance icons
 * Look into better animation for checking an item
 * Hide pictures option
-* Allow users to save data based on a unique GUID or FFA
 * Move Vaulted icon to the left
 * Make everything more robust by adding polling etc
 * Use thumbnails to get images of items instead of trying to find it in the page
