@@ -62,6 +62,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WfPrimeTracker.Business\WfPrimeTracker.Business.csproj" />
+    <ProjectReference Include="..\WfPrimeTracker.Infrastructure\WfPrimeTracker.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
