@@ -9,7 +9,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WfPrimeTracker.Business;
 using WfPrimeTracker.Business.Jobs;
+using WfPrimeTracker.Infrastructure;
 using WfPrimeTracker.Server.HangfireHelpers;
+using WfPrimeTracker.Server.Middleware;
+using WfPrimeTracker.Server.Models;
 
 namespace WfPrimeTracker.Server {
     public class Startup {
@@ -28,6 +31,7 @@ namespace WfPrimeTracker.Server {
                 conf.UseConsole();
             });
 
+            services.AddScoped<IUserData>(_ => new UserData());
             services.AddBusinessServices(Configuration);
         }
 
@@ -55,6 +59,8 @@ namespace WfPrimeTracker.Server {
             RecurringJob.AddOrUpdate<IFullScraperJob>(job => job.Invoke(null), Cron.Daily(4, 0));
             // Add job as late as possible for a full reset when necessary
             BackgroundJob.Schedule<IResetDataJob>(job => job.Invoke(null), DateTimeOffset.MaxValue);
+
+            app.UseMiddleware<AuthMiddleware>();
 
             app.UseMvc(routes => {
                 routes.MapRoute(
