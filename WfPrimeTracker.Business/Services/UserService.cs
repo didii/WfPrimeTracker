@@ -83,6 +83,9 @@ namespace WfPrimeTracker.Business.Services {
                 }
             }
 
+            // Make sure User gets updated
+            _context.Entry(user).State = EntityState.Modified;
+
             // Save
             await _context.SaveChangesAsync();
         }
