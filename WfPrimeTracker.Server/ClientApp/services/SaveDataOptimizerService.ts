@@ -1,30 +1,10 @@
-import { ISaveData, IPrimePartCheckedSaveData, IPrimeItemSaveData } from "@/models/SaveData";
+import { ISaveData, IPrimePartCheckedSaveData, IPrimeItemSaveData, IGlobalOptions } from "@/models/SaveData";
 import { PrimeItem } from '@/models/PrimeItem';
+import { IServerSaveData } from '@/models/ServerSaveData';
+import Constants from '@/consts';
+import Utils from '@/utils';
 
 export class SaveDataOptimizerService {
-    /**
-     * Default value for a prime item being checked
-     */
-    private static defaultPrimeItemCheckedValue: boolean = false;
-
-    /**
-     * The default value for showing ingredients, is the same as showIngredients of the global options
-     * @param saveData The current save data
-     */
-    private static defaultPrimeItemShowIngredientsValue(saveData?: ISaveData | null): boolean {
-        return SaveDataOptimizerService.default(() => saveData!.globalOptions.showIngredients, false);
-    };
-
-    /**
-     * The default value for a prime part being checked
-     */
-    private static defaultPrimePartCheckedValue: boolean = false;
-
-    /**
-     * The default value for a prime part being collapsed
-     */
-    private static defaultPrimePartCollapsedValue: boolean = true;
-
     /**
      * 'Optimizes' the data, i.e. removes all default values to make saveData as small as possible.
      * @param saveData The data to optimize
@@ -33,29 +13,30 @@ export class SaveDataOptimizerService {
     public optimize(saveData: ISaveData): ISaveData {
         // Clone save data so we don't modify it
         const result = JSON.parse(JSON.stringify(saveData)) as ISaveData;
+        console.log({msg: 'Optimizing', saveData});
 
         // Loop through every item
         for (const primeItemId in result.primeItems) {
             const primeItem = result.primeItems[primeItemId];
             // If checked value is the default -> delete the property
-            if (primeItem.isChecked === SaveDataOptimizerService.defaultPrimeItemCheckedValue) {
+            if (primeItem.isChecked === Constants.defaultPrimeItemCheckedValue) {
                 delete primeItem.isChecked;
             }
             // If show ingredients value is the default -> delete
-            if (primeItem.showIngredients === SaveDataOptimizerService.defaultPrimeItemShowIngredientsValue(result)) {
+            if (primeItem.showIngredients === Constants.defaultPrimeItemShowIngredientsValue(result.globalOptions)) {
                 delete primeItem.showIngredients;
             }
             // Loop through every part
             for (const primePartId in primeItem.primePartIngredients) {
                 const primePart = primeItem.primePartIngredients[primePartId];
                 // If collapsed value is the default -> delete the property
-                if (primePart.isCollapsed === SaveDataOptimizerService.defaultPrimePartCollapsedValue) {
+                if (primePart.isCollapsed === Constants.defaultPrimePartCollapsedValue) {
                     delete primePart.isCollapsed;
                 }
                 // Loop through every index
                 for (const index in primePart.isChecked) {
                     // If default -> delete
-                    if (primePart.isChecked[index] === SaveDataOptimizerService.defaultPrimePartCheckedValue) {
+                    if (primePart.isChecked[index] === Constants.defaultPrimePartCheckedValue) {
                         delete primePart.isChecked[index];
                     }
                 }
@@ -88,30 +69,31 @@ export class SaveDataOptimizerService {
     public deOptimize(primeItems: PrimeItem[], saveData?: ISaveData) {
         const result: ISaveData = {
             globalOptions: {
-                hideCompleted: SaveDataOptimizerService.default(() => saveData!.globalOptions.hideCompleted, false),
-                showIngredients: SaveDataOptimizerService.default(() => saveData!.globalOptions.showIngredients, false),
+                hideCompleted: Utils.default(() => saveData!.globalOptions.hideCompleted, false),
+                showIngredients: Utils.default(() => saveData!.globalOptions.showIngredients, false),
             },
             primeItems: {},
+            saveDate: Utils.default(() => saveData!.saveDate, new Date()),
         };
         for (const primeItem of primeItems) {
             let primePartSave: IPrimeItemSaveData = {
-                isChecked: SaveDataOptimizerService.default(() => saveData!.primeItems[primeItem.id].isChecked, SaveDataOptimizerService.defaultPrimeItemCheckedValue),
-                showIngredients: SaveDataOptimizerService.default(() => saveData!.primeItems[primeItem.id].showIngredients, SaveDataOptimizerService.defaultPrimeItemShowIngredientsValue(saveData!)),
+                isChecked: Utils.default(() => saveData!.primeItems[primeItem.id].isChecked, Constants.defaultPrimeItemCheckedValue),
+                showIngredients: Utils.default(() => saveData!.primeItems[primeItem.id].showIngredients, Constants.defaultPrimeItemShowIngredientsValue(saveData!.globalOptions)),
                 primePartIngredients: {},
             };
             for (const primePartIngredient of primeItem.primePartIngredients) {
                 const isChecked: IPrimePartCheckedSaveData = {};
                 for (let i = 0; i < primePartIngredient.count; i++) {
-                    isChecked[i] = SaveDataOptimizerService.default(
+                    isChecked[i] = Utils.default(
                         () => saveData!.primeItems[primeItem.id].primePartIngredients[primePartIngredient.id].isChecked[i],
-                        SaveDataOptimizerService.defaultPrimePartCheckedValue,
+                        Constants.defaultPrimePartCheckedValue,
                     );
                 }
                 primePartSave.primePartIngredients[primePartIngredient.id] = {
                     isChecked: isChecked,
-                    isCollapsed: SaveDataOptimizerService.default(
+                    isCollapsed: Utils.default(
                         () => saveData!.primeItems[primeItem.id].primePartIngredients[primePartIngredient.id].isCollapsed,
-                        SaveDataOptimizerService.defaultPrimePartCollapsedValue,
+                        Constants.defaultPrimePartCollapsedValue,
                     ),
                 };
             }
@@ -121,26 +103,60 @@ export class SaveDataOptimizerService {
     }
 
     /**
-     * The expressions/values are checked in order and the first non-null/undefined one is returned.
-     * When a function is given, it is first evaluated before the check. If it throws any error, it is skipped and we'll continue to the next value.
-     * When all values are null or undefined, an error is thrown.
-     * @param exprs A list of expressions or values
+     * Converts saveData to its server equivalent, best to use the optimized version of the save data for this
+     * @param saveData The data to convert
      */
-    private static default<T>(...exprs: ((() => T) | T)[]): T {
-        let result: T;
-        for (const expr of exprs) {
-            try {
-                if (typeof expr === 'function') {
-                    result = (<Function>expr)();
-                } else {
-                    result = expr;
-                }
-                if (result != null) {
-                    return result;
-                }
-            } catch (error) {}
+    public toServer(saveData: ISaveData): IServerSaveData {
+        console.log({msg: 'toServer', saveData});
+        let result: IServerSaveData = {
+            modifiedOn: saveData.saveDate,
+            primeItems: {},
+        };
+        for (let primeItemId in saveData.primeItems) {
+            let savedPrimeItem = saveData.primeItems[primeItemId];
+            result.primeItems[primeItemId] = {
+                isChecked: savedPrimeItem.isChecked,
+                primePartIngredients: {},
+            };
+
+            for (let primePartId in savedPrimeItem.primePartIngredients) {
+                let savedPrimePart = savedPrimeItem.primePartIngredients[primePartId];
+                result.primeItems[primeItemId].primePartIngredients[primePartId] = {
+                    checkedCount: Utils.default(() => Object.keys(savedPrimePart.isChecked).filter((k: any) => savedPrimePart.isChecked[k]).length, 0),
+                };
+            }
         }
-        throw Error('All given values were null or undefined');
+        return result;
     }
 
+    /**
+     * Merges saveData and serverSaveData to a ISaveData type, best to de-optimize the save data after this
+     * @param serverSaveData The data to convert
+     * @param saveData The data to use as base 
+     */
+    public fromServer(serverSaveData: IServerSaveData, saveData?: ISaveData): ISaveData {
+        let result: ISaveData = {
+            globalOptions: Utils.default<IGlobalOptions>(() => JSON.parse(JSON.stringify(saveData!.globalOptions)), Constants.defaultGlobalOptions),
+            primeItems: {},
+            saveDate: Utils.default(() => saveData!.saveDate, new Date()),
+        };
+        for (let primeItemId in serverSaveData.primeItems) {
+            let serverPrimeItem = serverSaveData.primeItems[primeItemId];
+            result.primeItems[primeItemId] = {
+                isChecked: serverPrimeItem.isChecked,
+                showIngredients: Utils.default(() => saveData!.primeItems[primeItemId].showIngredients,
+                Constants.defaultPrimeItemShowIngredientsValue(saveData!.globalOptions), false),
+                primePartIngredients: {},
+            }
+            for (let primePartId in serverPrimeItem.primePartIngredients) {
+                let serverPrimePart = serverPrimeItem.primePartIngredients[primePartId];
+                result.primeItems[primeItemId].primePartIngredients[primePartId] = {
+                    isCollapsed: Utils.default(() => saveData!.primeItems[primeItemId].primePartIngredients[primePartId].isCollapsed,
+                    Constants.defaultPrimePartCollapsedValue),
+                    isChecked: [...Array(serverPrimePart.checkedCount)].map(() => true),
+                };
+            }
+        }
+        return result;
+    }
 }

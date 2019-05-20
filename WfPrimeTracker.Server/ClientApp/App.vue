@@ -14,6 +14,7 @@ import GlobalModule from '@/stores/GlobalModule';
 import { PrimeItem } from '@/models/PrimeItem';
 import NavMenu from '@/components/NavMenu.vue';
 import { Dictionary } from 'vuex';
+import DiModule from './stores/DiModule';
 
 @Component({
     components: {
@@ -22,26 +23,32 @@ import { Dictionary } from 'vuex';
 })
 export default class App extends Vue {
     private globalModule = getModule(GlobalModule, this.$store);
+    private diModule = getModule(DiModule, this.$store);
 
-    public mounted() {
-        this.setAnonId(this.$route.query);
-        
+    public created() {
+        if (this.setAnonId(this.$route.query)) {
+            this.$router.replace(this.$route.path + '?anonId=' + this.globalModule.userId);
+        }
     }
 
     @Watch('$route.query') private onQueryParamsChange(query: Dictionary<string | (string | null)[]>) {
         this.setAnonId(query);
     }
 
-    private setAnonId(queryParams: Dictionary<string | (string | null)[]>) {
+    private setAnonId(queryParams: Dictionary<string | (string | null)[]>): boolean {
         // First use URL
         if (!this.setAnonIdFromQueryParams(queryParams)) {
             // If URL not available, check local storage
-            this.setAnonIdFromLocalStorage();
+            if (!this.setAnonIdFromLocalStorage()) {
+                console.log('No user ID found to set...');
+            }
         }
         // Make sure if there is a value, to store it in the local storage
         if (this.globalModule.userId != null) {
-            localStorage.setItem('anonId', this.globalModule.userId);
+            this.diModule.localLoadService.saveUserId(this.globalModule.userId);
+            return true;
         }
+        return false;
     }
 
     private setAnonIdFromQueryParams(queryParams: Dictionary<string | (string | null)[]>): boolean {
@@ -58,15 +65,17 @@ export default class App extends Vue {
         if (anonId == null) {
             return false;
         }
+        console.log('User ID set to ' + anonId + ' from query param');
         this.globalModule.setUserId(anonId);
         return true;
     }
 
     private setAnonIdFromLocalStorage(): boolean {
-        var anonId = localStorage.getItem('anonId');
+        let anonId = this.diModule.localLoadService.loadUserId();
         if (anonId == null) {
             return false;
         }
+        console.log('User ID set to ' + anonId + ' from local storage');
         this.globalModule.setUserId(anonId);
         return true;
     }

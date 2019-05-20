@@ -19,8 +19,8 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import { IPrimeItemSaveData } from '@/services/LoadService';
 import { PrimeItem } from '@/models/PrimeItem';
+import { IPrimeItemSaveData } from '@/models/SaveData';
 import IngredientsContainerView from './IngredientsContainerView.vue';
 
 @Component({

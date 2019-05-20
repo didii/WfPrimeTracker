@@ -17,6 +17,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import { getModule } from 'vuex-module-decorators';
+import Constants from '@/consts';
 import GlobalModule from '@/stores/GlobalModule';
 import { RelicDrop } from '@/models/RelicDrop';
 import { RelicTier } from '@/models/RelicTier.enum';
@@ -45,7 +46,7 @@ export default class RelicView extends Vue {
     }
 
     private get wikiUrl(): string {
-        return this.globalModule.wikiBaseUrl + this.relicDrop.relic.wikiUrl;
+        return Constants.wikiUrl + this.relicDrop.relic.wikiUrl;
     }
 
     private get iconName(): string {

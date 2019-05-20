@@ -1,22 +1,22 @@
-import { PrimeItem } from '@/models/PrimeItem';
+import Utils from '@/utils';
 import { ISaveData } from '@/models/SaveData';
-import { SaveDataOptimizerService } from './SaveDataOptimizerService';
+import Constants from '@/consts';
 
 export class LocalLoadService {
     private saveKey: string = 'saveData';
     private userIdKey: string = 'anonId';
 
-    public constructor(private optimizer: SaveDataOptimizerService) {}
+    public constructor() {}
 
-    public load(primeItems: PrimeItem[]): ISaveData {
+    public load(): ISaveData {
         const saved = localStorage.getItem(this.saveKey);
-        const saveData = this.default<ISaveData | undefined>(() => JSON.parse(saved!), undefined);
-        const result = this.optimizer.deOptimize(primeItems, saveData);
+        const result = Utils.default<ISaveData>(() => JSON.parse(saved!), Constants.defaultSaveData);
         return result;
     }
 
     public save(saveData: ISaveData) {
-        const toSave = this.optimizer.optimize(saveData);
+        let toSave = JSON.parse(JSON.stringify(saveData));
+        toSave.saveDate = new Date();
         localStorage.setItem(this.saveKey, JSON.stringify(toSave));
     }
 
@@ -26,23 +26,5 @@ export class LocalLoadService {
 
     public saveUserId(userId: string) {
         localStorage.setItem(this.userIdKey, userId);
-    }
-
-
-    private default<T>(...exprs: ((() => T) | T)[]): T {
-        let result;
-        for (const expr of exprs) {
-            try {
-                if (typeof expr === 'function') {
-                    result = (<Function>expr)();
-                } else {
-                    result = expr;
-                }
-                if (result != null) {
-                    return result;
-                }
-            } catch (error) {}
-        }
-        return result;
     }
 }

@@ -2,6 +2,7 @@
     <div data-component="primeitemscontainerview" class="items-container py-2">
         <PrimeItemsOptions
             :globalOptions="saveData.globalOptions"
+            @saveAnonymous="saveAnonymous"
             class="options"
         />
         <SummaryView :primeItems="primeItems" :saveData="saveData.primeItems" />
@@ -31,8 +32,8 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 import { getModule } from 'vuex-module-decorators';
 import AOS from 'aos';
 import GlobalModule from '@/stores/GlobalModule';
-import { ISaveData, IPrimeItemSaveData } from '@/services/LoadService';
 import { PrimeItem } from '@/models/PrimeItem';
+import { ISaveData, IPrimeItemSaveData } from '@/models/SaveData';
 import PrimeItemsOptions from './PrimeItemsOptions.vue';
 import SummaryView from './SummaryView.vue';
 import PrimeItemView from './PrimeItemView.vue';
@@ -80,6 +81,10 @@ export default class PrimeItemsContainerView extends Vue {
 
     private get primeItemSaveData(): (primeItem: PrimeItem) => IPrimeItemSaveData {
         return item => this.saveData.primeItems[item.id];
+    }
+
+    private saveAnonymous() {
+        this.$emit('saveAnonymous');
     }
 }
 </script>

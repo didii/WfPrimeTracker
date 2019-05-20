@@ -21,6 +21,8 @@ export interface IGlobalOptions {
     showIngredients: boolean;
 }
 export interface ISaveData {
+    userId: string;
     globalOptions: IGlobalOptions;
     primeItems: IPrimeItemsSaveData;
+    saveDate: Date;
 }

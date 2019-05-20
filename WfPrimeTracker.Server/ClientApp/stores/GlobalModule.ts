@@ -1,29 +1,11 @@
 import { Module, VuexModule, Mutation } from 'vuex-module-decorators';
-import { PrimeItemService } from '@/services/PrimeItemService';
-import { LocalLoadService } from '@/services/LocalLoadService';
-import { SaveDataOptimizerService } from '@/services/SaveDataOptimizerService';
 
 @Module({ name: 'GlobalModule' })
 export default class GlobalModule extends VuexModule {
     private _searchQuery: string = '';
     private _highlightId: number = 0;
     private _userId: string | null = null;
-
-    public get primeItemService(): PrimeItemService {
-        return new PrimeItemService();
-    }
-
-    public get saveDataOptimizer(): SaveDataOptimizerService {
-        return new SaveDataOptimizerService();
-    }
-
-    public get loadService(): LocalLoadService {
-        return new LocalLoadService(this.saveDataOptimizer);
-    }
-
-    public get wikiBaseUrl(): string {
-        return 'https://warframe.fandom.com';
-    }
+    private _isUserDataLoaded: boolean = false;
 
     public get searchQuery(): string {
         return this._searchQuery;
@@ -37,6 +19,10 @@ export default class GlobalModule extends VuexModule {
         return this._userId;
     }
 
+    public get isUserDataLoaded(): boolean {
+        return this._isUserDataLoaded;
+    }
+
     @Mutation public search(query: string) {
         this._searchQuery = query;
     }
@@ -47,5 +33,9 @@ export default class GlobalModule extends VuexModule {
 
     @Mutation public setUserId(userId: string | null) {
         this._userId = userId;
+    }
+
+    @Mutation public setIsUserDataLoaded() {
+        this._isUserDataLoaded = true;
     }
 }
