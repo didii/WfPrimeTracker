@@ -1,5 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using WfPrimeTracker.Domain;
+using WfPrimeTracker.Domain.Contracts;
 using WfPrimeTracker.Domain.Users;
 
 namespace WfPrimeTracker.Data {
@@ -42,6 +49,30 @@ namespace WfPrimeTracker.Data {
             // Set User tables
             modelBuilder.Entity<UserPrimeItemSaveData>().HasKey(d => new { d.UserId, d.PrimeItemId });
             modelBuilder.Entity<UserPrimePartIngredientSaveData>().HasKey(d => new { d.UserId, d.PrimePartIngredientId });
+        }
+
+        public override int SaveChanges() {
+            UpdateEntities(ChangeTracker.Entries());
+            return base.SaveChanges();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) {
+            UpdateEntities(ChangeTracker.Entries());
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void UpdateEntities(IEnumerable<EntityEntry> entries) {
+            var now = DateTime.Now;
+            foreach (var entry in entries) {
+                if (entry.Entity is ITrackable trackable) {
+                    if (entry.State == EntityState.Added) {
+                        trackable.CreatedOn = now;
+                        trackable.ModifiedOn = now;
+                    } else if (entry.State == EntityState.Modified) {
+                        trackable.ModifiedOn = now;
+                    }
+                }
+            }
         }
     }
 }
