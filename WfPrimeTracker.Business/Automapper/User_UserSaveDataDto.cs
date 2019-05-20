@@ -11,6 +11,7 @@ namespace WfPrimeTracker.Business.Automapper {
             if (destination == null)
                 destination = new UserSaveDataDto();
 
+            destination.ModifiedOn = source.ModifiedOn;
             destination.PrimeItems = new Dictionary<int, UserPrimeItemSaveDataDto>();
             foreach (var userPrimeItem in source.UserPrimeItemSaveData) {
                 destination.PrimeItems.Add(userPrimeItem.PrimeItemId, new UserPrimeItemSaveDataDto() {
